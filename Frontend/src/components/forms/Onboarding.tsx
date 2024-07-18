@@ -10,7 +10,6 @@ import sendFileToIPFS from "@/utils/sendFilestoIpfs";
 import { useFormStore } from "@/store/store";
 import { updateUser } from "@/api/user/updateUser";
 
-
 export default function Onboarding() {
   const multiselectRef = useRef(null);
 
@@ -27,7 +26,7 @@ export default function Onboarding() {
       bio: Form?.bio || " ",
       picture: Form?.picture || "",
       tags: Form?.tags || [],
-      walletAddress: ,
+      walletAddress: address,
       CreatedAt: " ",
       DeletedAt: "",
       UpdatedAt: "",
@@ -58,7 +57,7 @@ export default function Onboarding() {
       await updateUser(data, userInfo?.ID);
     }
 
-    setForm({ ...Form, ["ID"]: userInfo?.ID });
+    setForm({ ...Form, ["ID"]: 1});
 
     console.log(Form);
     console.log(data);

@@ -1,7 +1,9 @@
 import { useFormStore } from "@/store/store";
 import { Button } from "@nextui-org/react";
 import { Key, useEffect, useState } from "react";
-;
+import { URLEndpoint } from "@/api/games/getGames";
+
+import { findUser } from "@/api/user/findUser";
 import {
   Dialog,
   DialogContent,
@@ -10,25 +12,30 @@ import {
 } from "@/components/ui/dialog";
 import Onboarding from "../forms/Onboarding";
 import { DialogClose } from "@radix-ui/react-dialog";
+import axios from "axios";
 
 export default function ProfileHeader() {
   const { Form, setForm }: any = useFormStore();
+  const [userData, setUserData] = useState([]);
 
-  const userInfo = sessionStorage.getItem("current-user");
+  // const userInfo = sessionStorage.getItem("current-user");
 
- 
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const getUserData = () => {
-      if (userInfo !== undefined) {
-        setForm(JSON.parse(userInfo));
- 
+    const getUserData = async () => {
+      try {
+        const result = await axios.get(`${URLEndpoint}user/1`);
+        console.log(result);
+        setUserData(result.data);
+        return result.data;
+      } catch (err) {
+        console.log(err);
       }
-      console.log(Form);
     };
     getUserData();
   }, []);
+  console.log(userData);
 
   return (
     <section className=" bg-[rgba(255,255,255,0.056)] p-14 dark:bg-gray-900 dark:text-gray-100 mb-20 rounded-lg">
@@ -42,20 +49,13 @@ export default function ProfileHeader() {
           <div className="flex justify-between mb-4">
             <h4 className="text-3xl mt-10 font-semibold  font-urbanist text-left  md:text-left">
               Welcome! 🖐️{" "}
-              <span className="text-violet-400">
-                {JSON.parse(userInfo)?.username
-                  ? JSON.parse(userInfo)?.username
-                  : address}
-              </span>
+              <span className="text-violet-400">{userData.walletAddress}</span>
             </h4>
           </div>
           <p className="dark:text-gray-400 font-urbanist text-md pr-12 text-left mb-4">
             <span className="text-violet-400 flex flex-col">
-              <span className="mb-8 text-gray-200/[0.8]">
-                {" "}
-                {JSON.parse(userInfo)?.bio}
-              </span>
-              {JSON.parse(userInfo)?.username ? (
+              <span className="mb-8 text-gray-200/[0.8]"> {userData.bio}</span>
+              {userData.username ? (
                 <span className="text-[gray] font-bold tracking-wide">
                   Wallet Address :{" "}
                   <span className="text-white">
@@ -69,7 +69,7 @@ export default function ProfileHeader() {
             </span>
           </p>
           <span className="flex gap-x-12">
-            {JSON.parse(userInfo)?.tags?.map(
+            {userData.tags?.map(
               (
                 tag: string | number | boolean | undefined,
                 id: Key | null | undefined

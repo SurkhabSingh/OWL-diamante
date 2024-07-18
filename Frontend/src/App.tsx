@@ -9,14 +9,13 @@ import Home from "./pages/Home";
 const MarketPlace = lazy(() => import("./pages/MarketPlace"));
 const Profile = lazy(() => import("./pages/Profile"));
 import { GameDetailsPage } from "./pages/Details";
+
 // import Profile from "./pages/Profile";
 
 //Context Providers
 
-import { WalletProvider } from "./contexts/WalletContext";
-
 //Protected Logic
-import { ProtectedRoutes } from "./components/ProtectedRoutes";
+// import { ProtectedRoutes } from "./components/ProtectedRoutes";
 import Loading from "./components/Loading";
 import "./App.css";
 import { useQuery } from "@tanstack/react-query";
@@ -55,15 +54,13 @@ function App() {
         <Route
           path="/profile"
           element={
-            <ProtectedRoutes>
-              <Suspense
-                fallback={
-                  <Loading className="h-screen w-screen flex justify-center items-center" />
-                }
-              >
-                <Profile />
-              </Suspense>
-            </ProtectedRoutes>
+            <Suspense
+              fallback={
+                <Loading className="h-screen w-screen flex justify-center items-center" />
+              }
+            >
+              <Profile />
+            </Suspense>
           }
         />
       </Routes>

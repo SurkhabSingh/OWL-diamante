@@ -49,12 +49,12 @@ export default function GameDetails({
       try {
         toast.error(`${data.name} removed from Wishlist`);
         removeFromWishlist(data.id);
-        const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
-        await axios.delete(`http://localhost:8080/api/wish-list/${userID}`, {
-          data: {
-            wishList: String(data.id),
-          },
-        });
+        // const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
+        // await axios.delete(`http://localhost:8080/api/wish-list/${userID}`, {
+        //   data: {
+        //     wishList: String(data.id),
+        //   },
+        // });
 
         console.log(`${data.id} removed`);
       } catch (error) {
@@ -62,12 +62,12 @@ export default function GameDetails({
       }
     } else {
       try {
-        const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
+        // const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
         toast.success(`${data.name} added to Wishlist`);
         addToWishlist(data.id);
-        await axios.put(`http://localhost:8080/api/wish-list/${userID}`, {
-          wishList: [String(data.id)],
-        });
+        // await axios.put(`http://localhost:8080/api/wish-list/${userID}`, {
+        //   wishList: [String(data.id)],
+        // });
         console.log(`${data.id} added to wishlist`);
       } catch (error) {
         console.error("API is not working!!");

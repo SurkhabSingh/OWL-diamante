@@ -18,7 +18,7 @@ import Chat from "@/components/profile/Chat/Chat";
 export default function Profile() {
   const { buttonIndex }: any = useSidebarStore();
 
-  console.log(address);
+  // console.log(address);
 
   return (
     <main className="px-2 py-4 flex mb-5 justify-around flex-col 2xl:px-36 medium:px-48 extra:px-60 ">

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Toaster } from "sonner";
+import { toast } from "sonner";
 
 import owl from "../assets/owl.png";
 import {
@@ -37,6 +39,24 @@ export function NavbarComp() {
       description: "Login/check out your user dashboard",
     },
   ];
+
+  const handleWalletConnect = async () => {
+    // setProgress(40);
+    let public_address = "";
+    if (!window.diam) {
+      toast.error("Please install Diam Wallet extension.");
+      return;
+    }
+    window.diam
+      .connect()
+      .then((result) => {
+        toast.success(`Wallet connected succesfully`);
+        public_address = result.message[0];
+        localStorage.setItem("public_address", public_address);
+        // navigate(`/signup?public_address=${public_address}`);
+      })
+      .catch((error) => console.error(`Error: ${error}`));
+  };
 
   useEffect(() => {
     const handleConnect = async () => {
@@ -87,16 +107,16 @@ export function NavbarComp() {
             <NavigationMenuTrigger>Buy Preowned Games</NavigationMenuTrigger>
           </Link>
         </NavigationMenuItem>
-        {(
+        {
           <NavigationMenuItem>
             <Link to="/profile">
               <NavigationMenuTrigger>Profile</NavigationMenuTrigger>
             </Link>
           </NavigationMenuItem>
-        ) }
+        }
       </NavigationMenuList>
       <NavigationMenuList>
-        {(
+        {
           <div className="flex gap-x-2">
             <Button
               className="flex -px-6 bg-inherit hover:bg-[rgba(255,255,255,0.09)] "
@@ -130,8 +150,8 @@ export function NavbarComp() {
               <IoIosChatbubbles className=" text-xl text-white" />
             </Button>
           </div>
-        ) }
-        <Button>Connect Wallet</Button>
+        }
+        <Button onClick={handleWalletConnect}>Connect Wallet</Button>
 
         <w3m-button />
       </NavigationMenuList>
