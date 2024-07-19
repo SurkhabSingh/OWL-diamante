@@ -25,6 +25,7 @@ export function NavbarComp() {
 
   const { cart } = useCartStore();
   const { setButtonIndex } = useSidebarStore();
+  const [publicAddress, setPublicAddress] = useState(null);
   const navigate = useNavigate();
 
   const menuItems = [
@@ -41,8 +42,7 @@ export function NavbarComp() {
   ];
 
   const handleWalletConnect = async () => {
-    // setProgress(40);
-    let public_address = "";
+    const public_address = "";
     if (!window.diam) {
       toast.error("Please install Diam Wallet extension.");
       return;
@@ -51,30 +51,36 @@ export function NavbarComp() {
       .connect()
       .then((result) => {
         toast.success(`Wallet connected succesfully`);
-        public_address = result.message[0];
+
         localStorage.setItem("public_address", public_address);
-        // navigate(`/signup?public_address=${public_address}`);
+        setPublicAddress(public_address);
       })
       .catch((error) => console.error(`Error: ${error}`));
   };
 
   useEffect(() => {
-    const handleConnect = async () => {
-      const fetchAllUsers = await getAllUsers();
-      console.log(fetchAllUsers);
-      const user = fetchAllUsers?.findLast(
-        (user: any) => user.walletAddress === address
-      );
-      sessionStorage.setItem("current-user", JSON.stringify(user));
-      console.log(user);
+    // const handleConnect = async () => {
+    //   const fetchAllUsers = await getAllUsers();
+    //   console.log(fetchAllUsers);
+    //   const user = fetchAllUsers?.findLast(
+    //     (user: any) => user.walletAddress === address
+    //   );
+    //   sessionStorage.setItem("current-user", JSON.stringify(user));
+    //   console.log(user);
 
-      if (user === undefined) {
-        const new_User = await createUser(address);
-        sessionStorage.setItem("current-user", JSON.stringify(new_User));
-      }
-      //  toast.error("Awesome");
-    };
-    handleConnect();
+    //   if (user === undefined) {
+    //     const new_User = await createUser(address);
+    //     sessionStorage.setItem("current-user", JSON.stringify(new_User));
+    //   }
+    //   //  toast.error("Awesome");
+    // };
+    // handleConnect();
+
+    // Check if public_address exists in local storage
+    const storedPublicAddress = localStorage.getItem("public_address");
+    if (storedPublicAddress) {
+      setPublicAddress(storedPublicAddress);
+    }
   }, []);
 
   return (
@@ -151,9 +157,13 @@ export function NavbarComp() {
             </Button>
           </div>
         }
-        <Button onClick={handleWalletConnect}>Connect Wallet</Button>
+        {publicAddress !== null ? (
+          <div>lmao </div>
+        ) : (
+          <Button onClick={handleWalletConnect}>Connect Wallet</Button>
+        )}
 
-        <w3m-button />
+        {/* <w3m-button /> */}
       </NavigationMenuList>
     </NavigationMenu>
   );
