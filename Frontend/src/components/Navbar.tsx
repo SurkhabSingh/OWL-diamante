@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { Toaster } from "sonner";
-import { toast } from "sonner";
+import { useState } from "react";
 
+import CreateWallet from "./Home/ImportWallet";
 import owl from "../assets/owl.png";
 import {
   NavigationMenu,
@@ -21,11 +20,12 @@ import { Button } from "@nextui-org/react";
 import { IoIosChatbubbles } from "react-icons/io";
 
 export function NavbarComp() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { cart } = useCartStore();
   const { setButtonIndex } = useSidebarStore();
-  const [publicAddress, setPublicAddress] = useState(null);
+  // const [publicAddress, setPublicAddress] = useState(null);
+
   const navigate = useNavigate();
 
   const menuItems = [
@@ -59,30 +59,30 @@ export function NavbarComp() {
       .catch((error) => console.error(`Error: ${error}`));
   };
 
-  useEffect(() => {
-    // const handleConnect = async () => {
-    //   const fetchAllUsers = await getAllUsers();
-    //   console.log(fetchAllUsers);
-    //   const user = fetchAllUsers?.findLast(
-    //     (user: any) => user.walletAddress === address
-    //   );
-    //   sessionStorage.setItem("current-user", JSON.stringify(user));
-    //   console.log(user);
+  // useEffect(() => {
+  //   // const handleConnect = async () => {
+  //   //   const fetchAllUsers = await getAllUsers();
+  //   //   console.log(fetchAllUsers);
+  //   //   const user = fetchAllUsers?.findLast(
+  //   //     (user: any) => user.walletAddress === address
+  //   //   );
+  //   //   sessionStorage.setItem("current-user", JSON.stringify(user));
+  //   //   console.log(user);
 
-    //   if (user === undefined) {
-    //     const new_User = await createUser(address);
-    //     sessionStorage.setItem("current-user", JSON.stringify(new_User));
-    //   }
-    //   //  toast.error("Awesome");
-    // };
-    // handleConnect();
+  //   //   if (user === undefined) {
+  //   //     const new_User = await createUser(address);
+  //   //     sessionStorage.setItem("current-user", JSON.stringify(new_User));
+  //   //   }
+  //   //   //  toast.error("Awesome");
+  //   // };
+  //   // handleConnect();
 
-    // Check if public_address exists in local storage
-    const storedPublicAddress = localStorage.getItem("public_address");
-    if (storedPublicAddress !== null) {
-      setPublicAddress(storedPublicAddress);
-    }
-  }, []);
+  //   // Check if public_address exists in local storage
+  //   const storedPublicAddress = localStorage.getItem("public_address");
+  //   if (storedPublicAddress !== null) {
+  //     setPublicAddress(storedPublicAddress);
+  //   }
+  // }, []);
 
   return (
     <NavigationMenu
@@ -158,11 +158,13 @@ export function NavbarComp() {
             </Button>
           </div>
         }
-        {publicAddress == null ? (
-          <Button onClick={handleWalletConnect}>Connect Wallet</Button>
+        {/* {publicAddress == null ? (
+          <Button >Connect Wallet</Button>
         ) : (
-          <div>{publicAddress.slice(0, 10) + "..."}</div>
-        )}
+          // <div>{publicAddress.slice(0, 10) + "..."}</div>
+        )} */}
+        <Button onClick={handleWalletConnect}>Connect</Button>
+        <CreateWallet />
 
         {/* <w3m-button /> */}
       </NavigationMenuList>

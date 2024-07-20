@@ -14,16 +14,6 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use("/", router);
-// const ipfsCal = async () => {
-//   const resu = await sendFileToIPFS({
-//     name: "surkhab",
-//     age: "400",
-//     nickname: "pookie",
-//   });
-
-//   console.log(resu);
-// };
-// ipfsCal();
 
 // Start the Express server
 app.listen(port, () => {

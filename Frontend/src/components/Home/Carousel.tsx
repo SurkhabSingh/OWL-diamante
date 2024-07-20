@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { CarouselPlugin } from "../common/Carousel";
 import { Button } from "@nextui-org/react";
 
