@@ -1,6 +1,11 @@
 import { toast } from "sonner";
 import { useWishlistStore, useCartStore } from "@/store/store";
 import axios from "axios";
+import { CarouselPlugin } from "./DetailCarousel";
+import timeConverter from "../../utils/unixTimeConvert";
+import { Button } from "@nextui-org/react";
+import { RiSubtractFill } from "react-icons/ri";
+import { CiViewList } from "react-icons/ci";
 
 type dataType = {
   id: string;
@@ -164,7 +169,7 @@ export default function GameDetails({
                       <RiSubtractFill className="text-3xl text-blue-400" />
                     </>
                   ) : (
-                    <>Add to Cart </>
+                    <>Buy </>
                   )}
                 </Button>
                 <Button

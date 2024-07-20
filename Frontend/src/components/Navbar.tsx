@@ -42,7 +42,7 @@ export function NavbarComp() {
   ];
 
   const handleWalletConnect = async () => {
-    const public_address = "";
+    let public_address = "";
     if (!window.diam) {
       toast.error("Please install Diam Wallet extension.");
       return;
@@ -51,7 +51,8 @@ export function NavbarComp() {
       .connect()
       .then((result) => {
         toast.success(`Wallet connected succesfully`);
-
+        public_address = result.message[0];
+        console.log(result);
         localStorage.setItem("public_address", public_address);
         setPublicAddress(public_address);
       })
@@ -78,7 +79,7 @@ export function NavbarComp() {
 
     // Check if public_address exists in local storage
     const storedPublicAddress = localStorage.getItem("public_address");
-    if (storedPublicAddress) {
+    if (storedPublicAddress !== null) {
       setPublicAddress(storedPublicAddress);
     }
   }, []);
@@ -157,10 +158,10 @@ export function NavbarComp() {
             </Button>
           </div>
         }
-        {publicAddress !== null ? (
-          <div>lmao </div>
-        ) : (
+        {publicAddress == null ? (
           <Button onClick={handleWalletConnect}>Connect Wallet</Button>
+        ) : (
+          <div>{publicAddress.slice(0, 10) + "..."}</div>
         )}
 
         {/* <w3m-button /> */}

@@ -72,14 +72,14 @@ const Inventory = () => {
                         className="flex gap-x-5 bg-gray-200 hover:bg-red-200"
                         onClick={() => openResaleModal(element)}
                       >
-                        Resell
+                        List
                       </Button>
                     </DialogTrigger>
                   </Dialog>
 
-                  <Button className="flex gap-x-5 bg-gray-200 hover:bg-red-200">
+                  {/* <Button className="flex gap-x-5 bg-gray-200 hover:bg-red-200">
                     Verify
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>

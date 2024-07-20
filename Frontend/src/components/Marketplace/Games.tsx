@@ -28,6 +28,7 @@ export default function Games({
   summary,
   genres,
   className,
+  handleMinting,
 }: GameProps) {
   const navigate = useNavigate();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
@@ -62,16 +63,6 @@ export default function Games({
       } catch (error) {
         console.error("API is not working!!");
       }
-    }
-  };
-
-  const handleCart = () => {
-    if (isInCart) {
-      toast.error(`${name} removed from Cart`);
-      removeFromCart(index);
-    } else {
-      toast.success(`${name} added to Cart`);
-      addToCart(index);
     }
   };
 
@@ -113,20 +104,28 @@ export default function Games({
         <div className="flex flex-row">
           <Button
             type="button"
-            onClick={handleCart}
+            onClick={() =>
+              handleMinting({
+                price: Math.floor(Math.random() * 15 + 1),
+                name: name,
+                image: url,
+                id: index,
+              })
+            }
             className="mt-4 w-8/12 justify-center rounded-sm bg-slate-300/25 text-xs font-semibold text-white"
           >
-            {isInCart ? (
+            Buy
+            {/* {isInCart ? (
               <div className="flex items-center">
                 Remove from Cart
                 <RiSubtractFill className="text-blue-500 text-2xl font-extrabold" />
               </div>
             ) : (
               <>
-                Add to Cart
+                Buy
                 <MdShoppingCart className="text-xl font-extrabold" />
               </>
-            )}
+            )} */}
           </Button>
 
           <Button

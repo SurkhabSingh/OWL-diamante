@@ -17,6 +17,7 @@ import axios from "axios";
 export default function ProfileHeader() {
   const { Form, setForm }: any = useFormStore();
   const [userData, setUserData] = useState([]);
+  const [walletAddress, setWalletAddress] = useState("");
 
   // const userInfo = sessionStorage.getItem("current-user");
 
@@ -25,6 +26,10 @@ export default function ProfileHeader() {
   useEffect(() => {
     const getUserData = async () => {
       try {
+        const userWalletAddress = localStorage.getItem("public_address");
+        if (!userWalletAddress) return;
+        setWalletAddress(userWalletAddress);
+
         const result = await axios.get(`${URLEndpoint}user/1`);
         console.log(result);
         setUserData(result.data);
@@ -58,10 +63,7 @@ export default function ProfileHeader() {
               {userData.username ? (
                 <span className="text-[gray] font-bold tracking-wide">
                   Wallet Address :{" "}
-                  <span className="text-white">
-                    {" "}
-                    GBVPTMZD4JC7Q45JZNTP4HXPCYKGF3PHUFQ3C7SGOZQT6JHM6DL5LUXG
-                  </span>
+                  <span className="text-white"> {walletAddress}</span>
                 </span>
               ) : (
                 ""

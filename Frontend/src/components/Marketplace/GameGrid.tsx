@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useButtonStore } from "@/store/store";
+import { v4 as uuidv4 } from "uuid";
 
 import Games from "./Games";
 import { getGames } from "@/api/games/getGames";
 import { PaginationSection } from "./PaginationSection";
 import { SkeletonGrid } from "./SkeletonGrid";
+import axios from "axios";
 
 // type fetchDataType = {
 //   id: number;
@@ -40,6 +42,25 @@ export default function GameGrid() {
     queryKey: ["game-query"],
     select: (data) => transformData(data, buttonIndex),
   });
+
+  const handleMinting = async ({ price, name, image, id }: any) => {
+    // console.log(, name);
+    console.log("yes sukhu");
+    const bodyLicense = {
+      amount: price,
+      assetName: id.toString(),
+      image,
+      license: uuidv4(),
+      user: "SDV43QHIXC2QNZ3LKIQFVPLPA2RU7E62YLZJCEQSD7FSKTJ7MMG7JG4W",
+    };
+    console.log(bodyLicense);
+    const response = await axios
+      .post("http://localhost:3001/mint", bodyLicense)
+      .then((result) => {
+        console.log(result.data);
+        return result.data;
+      });
+  };
 
   const { data, isLoading } = gameData;
 
@@ -79,6 +100,7 @@ export default function GameGrid() {
                 releaseDate={element?.first_release_date}
                 summary={element?.summary}
                 className={"w-4/5 rounded-md border cursor-pointer h-[700px] "}
+                handleMinting={handleMinting}
               />
             )
           )}

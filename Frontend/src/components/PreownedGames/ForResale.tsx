@@ -12,7 +12,7 @@ const ForResale = () => {
   }, []);
 
   return (
-    <div className="mx-auto flex flex-col space-y-8 p-6 px-12 rounded-2xl bg-black sm:p-16 sm:px-24">
+    <div className="mx-auto flex flex-col space-y-8 p-6 px-12 rounded-2xl bg-black sm:p-16 sm:px-24 min-h-[100vh]">
       <h2 className="text-3xl font-urbanist font-bold">P2P Market :</h2>
 
       <ul className="flex flex-col font-urbanist w-full divide-y divide-gray-200">

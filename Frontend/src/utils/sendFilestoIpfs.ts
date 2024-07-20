@@ -10,7 +10,7 @@ const sendFileToIPFS = async (files: any[]) => {
 
       const resFile = await axios({
         method: "post",
-        url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
         data: formData,
         headers: {
           pinata_api_key: `${import.meta.env.VITE_PINATA_API_KEY}`,
