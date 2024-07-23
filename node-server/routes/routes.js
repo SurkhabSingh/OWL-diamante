@@ -7,7 +7,7 @@ const router = express.Router();
 router
   .post("/mint", assetController.mint)
   .post("/list", assetController.list)
-  .post("/sell", assetController.sell)
+  .post("/buy", assetController.buy)
   .get("/generate-wallet", walletController.generateWallet);
   
 

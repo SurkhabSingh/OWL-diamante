@@ -6,11 +6,9 @@ import "./index.css";
 import { WalletProvider } from "./contexts/WalletConnect.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <WalletProvider>
-      <NextUIProvider>
-        <App />
-      </NextUIProvider>
-    </WalletProvider>
-  </React.StrictMode>
+  <WalletProvider>
+    <NextUIProvider>
+      <App />
+    </NextUIProvider>
+  </WalletProvider>
 );

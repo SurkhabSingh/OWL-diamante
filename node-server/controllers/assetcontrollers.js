@@ -103,40 +103,46 @@ exports.list = async (req, res) => {
     });
   }
 };
-exports.sell = async (req, res) => {
+exports.buy = async (req, res) => {
   try {
-    const { assetName, mainIssuer, user, license } = req.body;
-    const server = new Horizon.Server("https://diamtestnet.diamcircle.io/");
-    const MARKET = await server.loadA;
+    const { assetName, mainIssuer, user, license, amount } = req.body;
+    const MARKET = Keypair.fromSecret(process.env.INTERMEDIATE_SECRET_KEY);
 
     const intermediateIssuer = Keypair.fromSecret(
       process.env.INTERMEDIATE_SECRET_KEY
     );
-    const listing_price = 5;
-    const amount = 25;
 
-    console.log(
-      assetName,
-      mainIssuer,
-      intermediateIssuer.publicKey(),
-      user,
-      license
-    );
+    console.log(assetName, intermediateIssuer.publicKey(), user, license);
     const mainIssuerKeypair = Keypair.fromSecret(mainIssuer);
 
     const userKeypair = Keypair.fromSecret(user);
     const asset = new Asset(assetName, mainIssuerKeypair.publicKey());
 
     //Transferring asset to user and collecting money
-    await createTrust(asset, mainIssuerKeypair, userKeypair);
-    await transferAsset(
-      asset,
-      mainIssuerKeypair,
-      userKeypair,
-      assetName,
-      license
-    );
+    await createTrust(asset, MARKET, userKeypair).then(async (res) => {
+      if (res.status === 200) {
+        await transferAsset(
+          assetName,
+          asset,
+          MARKET,
+          userKeypair,
+          license
+        ).then(async (res) => {
+          if (res.status === 200) {
+            await transfer_money(amount, userKeypair, mainIssuerKeypair);
+          }
+        });
+      }
+    });
+    res.send({
+      status: 200,
+      message: "Asset successfully bought!",
+    });
   } catch (error) {
     console.log(error);
+    res.send({
+      status: 500,
+      message: "Error in buy...",
+    });
   }
 };

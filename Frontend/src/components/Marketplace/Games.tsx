@@ -9,6 +9,7 @@ import { useCartStore, useWishlistStore } from "@/store/store";
 import axios from "axios";
 
 export type GameProps = {
+  id: number;
   index: string;
   url: string;
   name: string;
@@ -17,9 +18,11 @@ export type GameProps = {
   summary: string;
   genres: string;
   className: string;
+  isSale: boolean;
 };
 
 export default function Games({
+  id,
   index,
   url,
   name,
@@ -29,6 +32,8 @@ export default function Games({
   genres,
   className,
   handleMinting,
+  isSale,
+  issuerAddress,
 }: GameProps) {
   const navigate = useNavigate();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
@@ -69,7 +74,7 @@ export default function Games({
   return (
     <div
       key={index}
-      className={`${className} justify-around cursor-pointer divide-y-2 divide-[gray]/25 hover:bg-gray-600/25 hover:drop-shadow-[0_35px_35px_rgba(255,255,255,0.15)] opacity-75 hover:opacity-100 delay-75  transition-all ease-in-out pb-12 `}
+      className={`${className} justify-between cursor-pointer divide-y-2 divide-[gray]/25 hover:bg-gray-600/25 hover:drop-shadow-[0_35px_35px_rgba(255,255,255,0.15)] opacity-75 hover:opacity-100 delay-75  transition-all ease-in-out pb-12 `}
       onClick={() => navigate(`/game/${index}`)}
     >
       <img
@@ -80,14 +85,29 @@ export default function Games({
       <div className="p-5 font-inter">
         <p className="line-clamp-2 text-lg font-semibold font-jura">{name}</p>
         <p className="mt-3 text-sm line-clamp-2 text-white">{summary}</p>
-        <p className="mt-3 flex justify-between text-sm text-white">
-          <span className="text-violet-400">Released:</span>
-          {timeConverter(releaseDate)}
-        </p>
-        <p className="mt-3 flex justify-between text-sm text-white">
-          <span className="text-violet-400">Rating:</span>
-          {Math.round(rating)}
-        </p>
+        {isSale ? (
+          <div>
+            <p className="mt-3 flex justify-between text-sm text-white">
+              <span className="text-violet-400">
+                Released:{console.log(issuerAddress)}
+              </span>
+
+              {/* {issuerAddress.at(id)} */}
+            </p>
+          </div>
+        ) : (
+          <div>
+            <p className="mt-3 flex justify-between text-sm text-white">
+              <span className="text-violet-400">Released:</span>
+              {timeConverter(releaseDate)}
+            </p>
+            <p className="mt-3 flex justify-between text-sm text-white">
+              <span className="text-violet-400">Rating:</span>
+              {Math.round(rating)}
+            </p>
+          </div>
+        )}
+
         <p className="mt-3 text-left text-sm text-white">
           {genres
             ?.split(", ")

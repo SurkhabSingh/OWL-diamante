@@ -29,7 +29,8 @@ export default function GameGrid() {
   const { buttonIndex }: any = useButtonStore();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [postsPerPage] = useState<number>(12);
-  const [resellGames, setResellGames] = useState([]);
+  const [resellGames, setResellGames] = useState();
+  const [sellerAddress, setSellerAddresses] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -51,19 +52,31 @@ export default function GameGrid() {
         const response = await axios.request(reqOptions);
         const data = response.data;
         console.log(data);
-
+        console.log(data.balances);
         const assets = data.balances
-          .map((balance) => balance.asset_code)
-          .filter(Boolean);
+          .filter((balance: any) => balance.balance > 0)
+          .map((balance: any) => balance.asset_code)
+          .filter((asset: any) => asset !== undefined);
+
         console.log(assets);
         const issuerAddress = data.balances
-          .map((balance) => balance.asset_issuer)
-          .filter(Boolean);
-        console.log(issuerAddress);
+          .filter((balance: any) => balance.balance > 0)
+          .map((balance: any) => balance.asset_issuer)
+          .filter((asset: any) => asset !== undefined);
+
+        setSellerAddresses(
+          data.balances
+            .filter((balance: any) => balance.balance > 0)
+            .map((balance: any) => balance.asset_issuer)
+            .filter((asset: any) => asset !== undefined)
+        );
+
+        // console.log(issuerAddress);
 
         try {
           const gamesData1 = await getRecommendations(assets);
           console.log(gamesData1);
+          console.log(sellerAddress);
           setResellGames(gamesData1);
         } catch (error) {
           console.log(error);
@@ -74,7 +87,7 @@ export default function GameGrid() {
     }
 
     fetchData();
-  }, []);
+  }, [buttonIndex]);
 
   const transformData = (
     data: any[],
@@ -146,6 +159,7 @@ export default function GameGrid() {
             ) => (
               <Games
                 key={index}
+                id={index}
                 index={element.id}
                 url={element.cover.url}
                 name={element.name}
@@ -157,6 +171,8 @@ export default function GameGrid() {
                 summary={element?.summary}
                 className={"w-4/5 rounded-md border cursor-pointer h-[700px] "}
                 handleMinting={handleMinting}
+                isSale={buttonIndex === 2 ? true : false}
+                issuerAddresses={sellerAddress}
               />
             )
           )}
