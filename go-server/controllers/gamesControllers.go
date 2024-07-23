@@ -87,7 +87,7 @@ func GetInfoHandler(w http.ResponseWriter, r *http.Request){
 	id, _ := strconv.ParseInt(idStr, 10, 64)
 
 
-	query := []byte(`fields id, release_dates.date, similar_games, dlcs, franchise, platforms, language_supports.id, franchises, parent_game, genres.name, videos, involved_companies.id, name, summary, rating, storyline, cover.url, screenshots.url; where id=` + strconv.FormatInt(id, 10) + `;`)
+	query := []byte("fields id, release_dates.date, similar_games, dlcs, franchise, platforms, language_supports.id, franchises, parent_game, genres.name, videos, involved_companies.id, name, summary, rating, storyline, cover.url, screenshots.url; where id=" + idStr + ";"")
 
 	fmt.Println(token)
 	fmt.Println(idStr)

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ResaleForm from "../forms/ResaleForm";
 import { Button } from "@nextui-org/react";
 import { Dialog } from "@radix-ui/react-dialog";
-import ManageToken from "./ManagaeToken";
+import ManageToken from "./ManageToken";
 
 const Inventory = () => {
   const navigate = useNavigate();
