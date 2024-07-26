@@ -53,7 +53,7 @@ function switch_Index(index: number) {
     case 0:
       return <Stats />;
     case 1:
-      return <Chat />;
+      return <div></div>;
     case 2:
       return <Orders />;
     case 3:

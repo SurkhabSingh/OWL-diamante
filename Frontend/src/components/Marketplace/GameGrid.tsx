@@ -10,6 +10,8 @@ import { SkeletonGrid } from "./SkeletonGrid";
 import axios from "axios";
 import ManageToken from "../profile/ManageToken";
 import { getRecommendations } from "@/api/games/getRecommendations";
+import { p2pCall } from "@/api/games/p2pcall";
+import { toast } from "react-toastify";
 
 // type fetchDataType = {
 //   id: number;
@@ -34,25 +36,11 @@ export default function GameGrid() {
 
   useEffect(() => {
     async function fetchData() {
-      const headersList = {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      };
-
-      const marketplaceAddress = import.meta.env.VITE_MARKETPLACE_ADDRESS;
-      console.log(marketplaceAddress);
-
-      const reqOptions = {
-        url: `https://diamtestnet.diamcircle.io/accounts/${marketplaceAddress}`,
-        method: "GET",
-        headers: headersList,
-      };
-
       try {
-        const response = await axios.request(reqOptions);
+        const marketplaceAddress = import.meta.env.VITE_MARKETPLACE_ADDRESS;
+        const response = await p2pCall(marketplaceAddress);
         const data = response.data;
-        console.log(data);
-        console.log(data.balances);
+
         const assets = data.balances
           .filter((balance: any) => balance.balance > 0)
           .map((balance: any) => balance.asset_code)
@@ -118,7 +106,7 @@ export default function GameGrid() {
       assetName: id.toString(),
       image,
       license: uuidv4(),
-      user: "SDV43QHIXC2QNZ3LKIQFVPLPA2RU7E62YLZJCEQSD7FSKTJ7MMG7JG4W",
+      user: sessionStorage.getItem("public_address")?.toString(),
     };
     console.log(bodyLicense);
     const response = await axios
@@ -127,6 +115,11 @@ export default function GameGrid() {
         console.log(result.data);
         return result.data;
       });
+    if (response.data.status == 200) {
+      toast.success(`${name} is succesfully minted!`);
+    } else {
+      toast.success(`purchase failed`);
+    }
   };
 
   const { data, isLoading } = gameData;

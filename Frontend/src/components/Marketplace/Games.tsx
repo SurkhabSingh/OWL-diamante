@@ -126,7 +126,7 @@ export default function Games({
             type="button"
             onClick={() =>
               handleMinting({
-                price: Math.floor(Math.random() * 15 + 1),
+                price: Math.floor(Math.random() * 20 + 2),
                 name: name,
                 image: url,
                 id: index,

@@ -12,19 +12,26 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import React from "react";
-
+import { RiAccountCircleFill } from "react-icons/ri";
 import { createUser, getAllUsers } from "@/api/user/createUser";
 import { MdShoppingCart } from "react-icons/md";
 import { useSidebarStore, useCartStore } from "@/store/store";
 import { Button } from "@nextui-org/react";
 import { IoIosChatbubbles } from "react-icons/io";
+import { toast } from "react-toastify";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/react";
 
 export function NavbarComp() {
   // const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { cart } = useCartStore();
   const { setButtonIndex } = useSidebarStore();
-  // const [publicAddress, setPublicAddress] = useState(null);
+  const [publicAddress, setPublicAddress] = useState();
 
   const navigate = useNavigate();
 
@@ -53,10 +60,14 @@ export function NavbarComp() {
         toast.success(`Wallet connected succesfully`);
         public_address = result.message[0];
         console.log(result);
-        localStorage.setItem("public_address", public_address);
+        sessionStorage.setItem("public_address", public_address);
         setPublicAddress(public_address);
       })
       .catch((error) => console.error(`Error: ${error}`));
+  };
+
+  const handleDisconnect = () => {
+    sessionStorage.removeItem("public_address");
   };
 
   // useEffect(() => {
@@ -109,18 +120,16 @@ export function NavbarComp() {
             <NavigationMenuTrigger>Marketplace</NavigationMenuTrigger>
           </Link>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link to="/resales">
-            <NavigationMenuTrigger>Buy Preowned Games</NavigationMenuTrigger>
-          </Link>
-        </NavigationMenuItem>
-        {
+
+        {sessionStorage.getItem("public_address") === null ? (
+          <div></div>
+        ) : (
           <NavigationMenuItem>
             <Link to="/profile">
               <NavigationMenuTrigger>Profile</NavigationMenuTrigger>
             </Link>
           </NavigationMenuItem>
-        }
+        )}
       </NavigationMenuList>
       <NavigationMenuList>
         {
@@ -158,13 +167,43 @@ export function NavbarComp() {
             </Button>
           </div>
         }
-        {/* {publicAddress == null ? (
-          <Button >Connect Wallet</Button>
-        ) : (
-          // <div>{publicAddress.slice(0, 10) + "..."}</div>
-        )} */}
-        <Button onClick={handleWalletConnect}>Connect</Button>
-        <CreateWallet />
+        <div className="flex gap-x-5 items-center justify-center">
+          {sessionStorage.getItem("public_address") === null ? (
+            <div className="flex gap-x-5">
+              <CreateWallet />
+              <Button
+                variant="shadow"
+                onClick={handleWalletConnect}
+                className="font-bold font-urbanist text-lg text-black bg-violet-400 shadow-gray-600"
+              >
+                Connect Wallet
+              </Button>
+            </div>
+          ) : (
+            <Dropdown className="bg-black text-white">
+              <DropdownTrigger>
+                <Button
+                  className="flex p-3 bg-inherit hover:bg-[rgba(255,255,255,0.09)]"
+                  onClick={() => setButtonIndex(0)}
+                >
+                  <span className="font-urbanist tracking-wider font-bold text-white  rounded-md">
+                    {sessionStorage.getItem("public_address").slice(0, 15) +
+                      "..."}
+                  </span>
+                  <RiAccountCircleFill className="text-3xl text-white rounded-lg" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Static Actions">
+                <DropdownItem
+                  key="disconnect"
+                  className="font-urbanist  text-xl tracking-wider hover:bg-[rgba(255,255,255,0.3)] hover:text-white"
+                >
+                  Disconnect
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          )}
+        </div>
 
         {/* <w3m-button /> */}
       </NavigationMenuList>

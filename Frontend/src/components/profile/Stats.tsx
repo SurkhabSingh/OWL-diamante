@@ -29,7 +29,7 @@ export default function Stats() {
         <span className="text-3xl font-semibold font-urbanist text-white">
           Groups
         </span>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-8 mt-12">
+        {/* <div className="grid grid-cols-2 gap-x-4 gap-y-8 mt-12">
           {users.map((element, id) => (
             <button
               key={id}
@@ -54,7 +54,7 @@ export default function Stats() {
               </div>
             </button>
           ))}
-        </div>
+        </div> */}
       </div>
     </section>
   );

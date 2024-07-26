@@ -64,7 +64,7 @@ const CreateWallet = () => {
     <>
       <Button
         onPress={onOpen}
-        className="font-urbanist font-semibold tracking-wider leading-5"
+        className="font-urbanist font-semibold tracking-wider leading-5 text-lg "
       >
         Create Wallet
       </Button>

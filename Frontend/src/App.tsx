@@ -21,6 +21,7 @@ import "./App.css";
 import { useQuery } from "@tanstack/react-query";
 import { getGames } from "./api/games/getGames";
 import ForResale from "./components/PreownedGames/ForResale";
+import { ProtectedRoutes } from "./components/ProtectedRoutes";
 
 function App() {
   useQuery({
@@ -59,7 +60,9 @@ function App() {
                 <Loading className="h-screen w-screen flex justify-center items-center" />
               }
             >
-              <Profile />
+              <ProtectedRoutes>
+                <Profile />
+              </ProtectedRoutes>
             </Suspense>
           }
         />
