@@ -40,26 +40,21 @@ export default function GameGrid() {
         const marketplaceAddress = import.meta.env.VITE_MARKETPLACE_ADDRESS;
         const response = await p2pCall(marketplaceAddress);
         const data = response.data;
+        console.log(data);
 
         const assets = data.balances
           .filter((balance: any) => balance.balance > 0)
           .map((balance: any) => balance.asset_code)
           .filter((asset: any) => asset !== undefined);
-
         console.log(assets);
+
         const issuerAddress = data.balances
           .filter((balance: any) => balance.balance > 0)
           .map((balance: any) => balance.asset_issuer)
           .filter((asset: any) => asset !== undefined);
+        console.log(issuerAddress);
 
-        setSellerAddresses(
-          data.balances
-            .filter((balance: any) => balance.balance > 0)
-            .map((balance: any) => balance.asset_issuer)
-            .filter((asset: any) => asset !== undefined)
-        );
-
-        // console.log(issuerAddress);
+        setSellerAddresses(issuerAddress[0]);
 
         try {
           const gamesData1 = await getRecommendations(assets);
@@ -128,6 +123,7 @@ export default function GameGrid() {
   const lastPostIndex = currentPage * postsPerPage;
   const firstPostIndex = lastPostIndex - postsPerPage;
   const slicedData = games?.slice(firstPostIndex, lastPostIndex);
+  console.log(sellerAddress);
 
   return (
     <div className="flex flex-col w-full pr-24 -ml-10 mb-12 items-center justify-center">
@@ -147,6 +143,7 @@ export default function GameGrid() {
                 }[];
                 first_release_date: number;
                 summary: string;
+                sellerAddress: string;
               },
               index: number
             ) => (
@@ -162,10 +159,10 @@ export default function GameGrid() {
                   element?.first_release_date || element?.release_dates[0].date
                 }
                 summary={element?.summary}
-                className={"w-4/5 rounded-md border cursor-pointer h-[700px] "}
                 handleMinting={handleMinting}
                 isSale={buttonIndex === 2 ? true : false}
-                issuerAddresses={sellerAddress}
+                issuerAddress={sellerAddress}
+                className={"w-4/5 rounded-md border cursor-pointer h-[700px] "}
               />
             )
           )}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import CreateWallet from "./Home/ImportWallet";
 import owl from "../assets/owl.png";
@@ -48,45 +48,46 @@ export function NavbarComp() {
     },
   ];
 
-  const handleWalletConnect = async () => {
-    let public_address = "";
-    if (!window.diam) {
-      toast.error("Please install Diam Wallet extension.");
-      return;
-    }
-    window.diam
-      .connect()
-      .then((result) => {
-        toast.success(`Wallet connected succesfully`);
-        public_address = result.message[0];
-        console.log(result);
-        sessionStorage.setItem("public_address", public_address);
-        setPublicAddress(public_address);
-      })
-      .catch((error) => console.error(`Error: ${error}`));
-  };
+  // const handleWalletConnect = async () => {
+  //   let public_address = "";
+  //   if (!window.diam) {
+  //     toast.error("Please install Diam Wallet extension.");
+  //     return;
+  //   }
+  //   window.diam
+  //     .connect()
+  //     .then((result) => {
+  //       toast.success(`Wallet connected succesfully`);
+  //       public_address = result.message[0];
+  //       console.log(result);
+  //       sessionStorage.setItem("public_address", public_address);
+  //       setPublicAddress(public_address);
+  //     })
+  //     .catch((error) => console.error(`Error: ${error}`));
+  // };
 
-  const handleDisconnect = () => {
-    sessionStorage.removeItem("public_address");
-  };
+  // const handleDisconnect = () => {
+  //   sessionStorage.removeItem("public_address");
+  // };
 
   // useEffect(() => {
-  //   // const handleConnect = async () => {
-  //   //   const fetchAllUsers = await getAllUsers();
-  //   //   console.log(fetchAllUsers);
-  //   //   const user = fetchAllUsers?.findLast(
-  //   //     (user: any) => user.walletAddress === address
-  //   //   );
-  //   //   sessionStorage.setItem("current-user", JSON.stringify(user));
-  //   //   console.log(user);
 
-  //   //   if (user === undefined) {
-  //   //     const new_User = await createUser(address);
-  //   //     sessionStorage.setItem("current-user", JSON.stringify(new_User));
-  //   //   }
-  //   //   //  toast.error("Awesome");
-  //   // };
-  //   // handleConnect();
+  //   const handleConnect = async () => {
+  //     const fetchAllUsers = await getAllUsers();
+  //     console.log(fetchAllUsers);
+  //     const user = fetchAllUsers?.findLast(
+  //       (user: any) => user.walletAddress === address
+  //     );
+  //     sessionStorage.setItem("current-user", JSON.stringify(user));
+  //     console.log(user);
+
+  //     if (user === undefined) {
+  //       const new_User = await createUser(publicAddress);
+  //       sessionStorage.setItem("current-user", JSON.stringify(new_User));
+  //     }
+  //     //  toast.error("Awesome");
+  //   };
+  //   handleConnect();
 
   //   // Check if public_address exists in local storage
   //   const storedPublicAddress = localStorage.getItem("public_address");
@@ -94,6 +95,48 @@ export function NavbarComp() {
   //     setPublicAddress(storedPublicAddress);
   //   }
   // }, []);
+
+  const handleWalletConnect = async () => {
+    let public_address = "";
+    if (!window.diam) {
+      toast.error("Please install Diam Wallet extension.");
+      return;
+    }
+    try {
+      const result = await window.diam.connect();
+      toast.success(`Wallet connected successfully`);
+      public_address = result.message[0];
+      console.log(result);
+      sessionStorage.setItem("public_address", public_address);
+      setPublicAddress(public_address);
+
+      const users = await getAllUsers();
+      console.log(users);
+      const user = users?.findLast(
+        (user: any) => user.walletAddress === public_address
+      );
+      sessionStorage.setItem("current-user", JSON.stringify(user));
+      console.log(user);
+
+      if (user === undefined) {
+        const newUser = await createUser(public_address);
+        sessionStorage.setItem("current-user", JSON.stringify(newUser));
+      }
+    } catch (error) {
+      console.error(`Error: ${error}`);
+    }
+  };
+
+  const handleDisconnect = () => {
+    sessionStorage.removeItem("public_address");
+  };
+
+  useEffect(() => {
+    const storedPublicAddress = sessionStorage.getItem("public_address");
+    if (storedPublicAddress !== null) {
+      setPublicAddress(storedPublicAddress);
+    }
+  }, []);
 
   return (
     <NavigationMenu

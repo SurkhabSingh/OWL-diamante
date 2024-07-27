@@ -1,7 +1,7 @@
 import axios from "axios";
 import { URLEndpoint } from "../games/getGames";
 
-export const createUser = async (address: `0x${string}` | undefined) => {
+export const createUser = async (address: string | undefined) => {
   await axios
     .post(`${URLEndpoint}user`, { WalletAddress: address })
     .then((result) => {

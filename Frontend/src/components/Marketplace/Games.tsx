@@ -4,8 +4,8 @@ import { RiSubtractFill } from "react-icons/ri";
 import { toast } from "sonner";
 import { Button } from "@nextui-org/react";
 import { CiViewList } from "react-icons/ci";
-import { MdShoppingCart } from "react-icons/md";
 import { useCartStore, useWishlistStore } from "@/store/store";
+import { MdShoppingCart } from "react-icons/md";
 import axios from "axios";
 
 export type GameProps = {
@@ -18,7 +18,6 @@ export type GameProps = {
   summary: string;
   genres: string;
   className: string;
-  isSale: boolean;
 };
 
 export default function Games({
@@ -87,12 +86,8 @@ export default function Games({
         <p className="mt-3 text-sm line-clamp-2 text-white">{summary}</p>
         {isSale ? (
           <div>
-            <p className="mt-3 flex justify-between text-sm text-white">
-              <span className="text-violet-400">
-                Released:{console.log(issuerAddress)}
-              </span>
-
-              {/* {issuerAddress.at(id)} */}
+            <p className="mt-3 flex justify-between text-sm text-white line-clamp-3">
+              <span className="text-white">Address:{issuerAddress}</span>
             </p>
           </div>
         ) : (
