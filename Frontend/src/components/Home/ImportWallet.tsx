@@ -12,6 +12,7 @@ import { FaCopy } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { createUser } from "@/api/user/createUser";
 
 const CreateWallet = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -39,6 +40,11 @@ const CreateWallet = () => {
       setMnemonic(data.mnemonic);
       setPublicKey(data.publicKey);
       setSecretKey(data.secretKey);
+      sessionStorage.setItem("publicKey", data.publicKey);
+      sessionStorage.setItem("secretKey", data.secretKey);
+
+      const newUser = await createUser(publicKey, secretKey);
+      sessionStorage.setItem("current-user", JSON.stringify(newUser));
     } catch (error) {
       toast.error("Failed to fetch wallet data");
     }
@@ -96,7 +102,9 @@ const CreateWallet = () => {
                   <div className="generate_mnemonic_box flex flex-col gap-x-5">
                     <div className="generate_mnemonic_desc">
                       <h1 className="text-red-400">
-                        COPY THESE VALUES FOR FUTURE REFERENCE!!!
+                        COPY THESE VALUES FOR FUTURE REFERENCE!!! Make sure to
+                        copy this mnemonic phrase as it will be used to import
+                        the wallet.
                       </h1>
                     </div>
                     <div className="flex flex-col gap-x-5">

@@ -1,3 +1,4 @@
+import { Button } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 
 export type DetailProps = {

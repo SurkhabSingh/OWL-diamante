@@ -60,9 +60,9 @@ function App() {
                 <Loading className="h-screen w-screen flex justify-center items-center" />
               }
             >
-              <ProtectedRoutes>
+              {/* <ProtectedRoutes> */}
                 <Profile />
-              </ProtectedRoutes>
+              {/* </ProtectedRoutes> */}
             </Suspense>
           }
         />

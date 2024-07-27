@@ -119,8 +119,8 @@ export function NavbarComp() {
       console.log(user);
 
       if (user === undefined) {
-        const newUser = await createUser(public_address);
-        sessionStorage.setItem("current-user", JSON.stringify(newUser));
+        // const newUser = await createUser(public_address);
+        // sessionStorage.setItem("current-user", JSON.stringify(newUser));
       }
     } catch (error) {
       console.error(`Error: ${error}`);
@@ -164,7 +164,7 @@ export function NavbarComp() {
           </Link>
         </NavigationMenuItem>
 
-        {sessionStorage.getItem("public_address") === null ? (
+        {sessionStorage.getItem("publicKey") === null ? (
           <div></div>
         ) : (
           <NavigationMenuItem>
@@ -211,16 +211,16 @@ export function NavbarComp() {
           </div>
         }
         <div className="flex gap-x-5 items-center justify-center">
-          {sessionStorage.getItem("public_address") === null ? (
+          {sessionStorage.getItem("publicKey") === null ? (
             <div className="flex gap-x-5">
               <CreateWallet />
-              <Button
+              {/* <Button
                 variant="shadow"
                 onClick={handleWalletConnect}
                 className="font-bold font-urbanist text-lg text-black bg-violet-400 shadow-gray-600"
               >
                 Connect Wallet
-              </Button>
+              </Button> */}
             </div>
           ) : (
             <Dropdown className="bg-black text-white">
@@ -230,8 +230,7 @@ export function NavbarComp() {
                   onClick={() => setButtonIndex(0)}
                 >
                   <span className="font-urbanist tracking-wider font-bold text-white  rounded-md">
-                    {sessionStorage.getItem("public_address").slice(0, 15) +
-                      "..."}
+                    {sessionStorage.getItem("publicKey").slice(0, 15) + "..."}
                   </span>
                   <RiAccountCircleFill className="text-3xl text-white rounded-lg" />
                 </Button>

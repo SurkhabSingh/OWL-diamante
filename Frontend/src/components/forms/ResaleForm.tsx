@@ -22,16 +22,10 @@ const ResaleForm = ({ selectedGame, open, setOpen }) => {
   const onSubmit = (data) => {
     const resaleData = {
       id: selectedGame.id,
-      cover:selectedGame.cover.url,
+      cover: selectedGame.cover.url,
       name: data.gameName,
       price: data.price,
     };
-
-    const existingResales = JSON.parse(sessionStorage.getItem("resales")) || [];
-    sessionStorage.setItem(
-      "resales",
-      JSON.stringify([...existingResales, resaleData])
-    );
 
     setOpen(false);
   };
@@ -39,7 +33,6 @@ const ResaleForm = ({ selectedGame, open, setOpen }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
-        
         <section className="py-8 px-3 w-full">
           <div className="flex flex-col justify-start">
             <div className="w-full flex gap-x-24">
@@ -103,5 +96,3 @@ const ResaleForm = ({ selectedGame, open, setOpen }) => {
 };
 
 export default ResaleForm;
-
-

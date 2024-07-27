@@ -17,9 +17,7 @@ export function CTA() {
         </div>
         <form action="#" method="POST" className="mx-auto mt-12 max-w-xl">
           <div className="flex flex-col items-center sm:flex-row sm:justify-center">
-            <div className="flex w-full max-w-sm items-center justify-center space-x-2">
-              <w3m-button />
-            </div>
+            <div className="flex w-full max-w-sm items-center justify-center space-x-2"></div>
           </div>
         </form>
         <div className="mt-8 flex items-center justify-center px-8 sm:px-0">
