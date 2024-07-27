@@ -20,7 +20,7 @@ var validate *validator.Validate
 
 type UserInput struct {
   WalletAddress string `json:"walletAddress" validate:"required"`
-  
+   SecretKey string `json:"secretKey" validate:"required"`
 }
 
 type UserInputUpdate struct {
@@ -69,9 +69,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
     return 
   }
 
-  quest, err := models.NewUser(input.WalletAddress)
-
-  
+  quest, err := models.NewUser(input.WalletAddress, input.SecretKey)
 
   w.Header().Set("Content-Type", "application/json")
  

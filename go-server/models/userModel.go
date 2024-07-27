@@ -11,6 +11,7 @@ type User struct {
   gorm.Model
   // ID uint `json:"id" gorm:"primary_key"`  
 	WalletAddress string `json:"walletAddress"`
+  SecretKey string `json:"secretKey"`
   Username string `json:"username"`
   Email string `json:"email"`
   Picture string `json:"picture"`
@@ -22,9 +23,10 @@ type User struct {
   UpdatedAt time.Time `json:"updated_at"`
 }
 
-func NewUser(walletAddress string) (user *User, err error){
+func NewUser(walletAddress string, secretKey string) (user *User, err error){
   user = &User{
     WalletAddress: walletAddress,
+    SecretKey : secretKey,
   }
 
   DB.Create(&user)
