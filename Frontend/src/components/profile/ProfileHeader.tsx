@@ -19,7 +19,6 @@ export default function ProfileHeader() {
   const [userData, setUserData] = useState([]);
   const [walletAddress, setWalletAddress] = useState("");
 
-  // const userInfo = sessionStorage.getItem("current-user");
 
   const [open, setOpen] = useState(false);
 

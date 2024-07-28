@@ -102,6 +102,7 @@ export default function GameGrid() {
       image,
       license: uuidv4(),
       user: sessionStorage.getItem("secretKey")?.toString(),
+      userAddress: sessionStorage.getItem("publicKey")?.toString(),
     };
     console.log(bodyLicense);
     const response = await axios

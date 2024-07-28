@@ -12,9 +12,14 @@ const axios = require("axios");
 
 exports.mint = async (req, res) => {
   try {
-    const { assetName, user, license, amount, image } = req.body;
-    const ipfsHash = await sendFileToIPFS({ assetName, license, image });
+    const { assetName, user, license, amount, image, userAddress } = req.body;
     const userKeypair = Keypair.fromSecret(user);
+    const ipfsHash = await sendFileToIPFS({
+      assetName,
+      license,
+      image,
+      userAddress,
+    });
     const MARKET = Keypair.fromSecret(process.env.INTERMEDIATE_SECRET_KEY);
     const intermediateIssuer = Keypair.random();
     await fundAccount(intermediateIssuer);
@@ -61,8 +66,9 @@ exports.list = async (req, res) => {
 
     const MARKET = Keypair.fromSecret(process.env.INTERMEDIATE_SECRET_KEY);
     const seller_keypair = Keypair.fromSecret(seller);
-    const intermediateIssuer = Keypair.random();
-    await fundAccount(intermediateIssuer);
+
+    // const intermediateIssuer = Keypair.random();
+    // await fundAccount(intermediateIssuer);
 
     const listing_price = "5";
 
@@ -76,17 +82,12 @@ exports.list = async (req, res) => {
     console.log(
       assetName,
       intermediateIssuer.publicKey(),
-      seller_keypair.publicKey(),
+      seller_keypair.publicKey()
     );
 
     await createTrust(asset, seller_keypair, MARKET).then(async (res) => {
       if (res.status === 200) {
-        await transferAsset(
-          asset,
-          seller_keypair,
-          MARKET,
-
-        ).then(async (res) => {
+        await transferAsset(asset, seller_keypair, MARKET).then(async (res) => {
           if (res.status === 200) {
             await transfer_money(listing_price, seller_keypair, MARKET);
           }
@@ -107,7 +108,8 @@ exports.list = async (req, res) => {
 };
 exports.buy = async (req, res) => {
   try {
-    const { assetName, mainIssuer, user, license, amount } = req.body;
+    const amount = "15";
+    const { assetName, mainIssuer, user } = req.body;
     const MARKET = Keypair.fromSecret(process.env.INTERMEDIATE_SECRET_KEY);
 
     const intermediateIssuer = Keypair.fromSecret(
@@ -161,13 +163,21 @@ exports.verify = async (req, res) => {
     const decodedData = Buffer.from(encodedData, "base64").toString("utf-8");
 
     const decodedSecData = Buffer.from(decodedData, "base64").toString("utf-8");
+    // return res.send({
+    //   data: decodedSecData,
+    //   status: 200,
+    //   message: "metadata sent successfully",
+    // });
 
     await axios
       .get(`https://ipfs.io/ipfs/${decodedSecData}`)
       .then((result) => {
         console.log(result.data);
         return res.send({
-          data: result.data,
+          data: {
+            hash: decodedSecData,
+            info: result.data,
+          },
           status: 200,
           message: "metadata sent successfully",
         });

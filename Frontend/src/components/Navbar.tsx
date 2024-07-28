@@ -96,47 +96,47 @@ export function NavbarComp() {
   //   }
   // }, []);
 
-  const handleWalletConnect = async () => {
-    let public_address = "";
-    if (!window.diam) {
-      toast.error("Please install Diam Wallet extension.");
-      return;
-    }
-    try {
-      const result = await window.diam.connect();
-      toast.success(`Wallet connected successfully`);
-      public_address = result.message[0];
-      console.log(result);
-      sessionStorage.setItem("public_address", public_address);
-      setPublicAddress(public_address);
+  // const handleWalletConnect = async () => {
+  //   let public_address = "";
+  //   if (!window.diam) {
+  //     toast.error("Please install Diam Wallet extension.");
+  //     return;
+  //   }
+  //   try {
+  //     const result = await window.diam.connect();
+  //     toast.success(`Wallet connected successfully`);
+  //     public_address = result.message[0];
+  //     console.log(result);
+  //     sessionStorage.setItem("public_address", public_address);
+  //     setPublicAddress(public_address);
 
-      const users = await getAllUsers();
-      console.log(users);
-      const user = users?.findLast(
-        (user: any) => user.walletAddress === public_address
-      );
-      sessionStorage.setItem("current-user", JSON.stringify(user));
-      console.log(user);
+  //     const users = await getAllUsers();
+  //     console.log(users);
+  //     const user = users?.findLast(
+  //       (user: any) => user.walletAddress === publicKey
+  //     );
+  //     sessionStorage.setItem("current-user", JSON.stringify(user));
+  //     console.log(user);
 
-      if (user === undefined) {
-        // const newUser = await createUser(public_address);
-        // sessionStorage.setItem("current-user", JSON.stringify(newUser));
-      }
-    } catch (error) {
-      console.error(`Error: ${error}`);
-    }
-  };
+  //     if (user === undefined) {
+  //       const newUser = await createUser(data.publicKey, data.secretKey);
+  //       sessionStorage.setItem("current-user", JSON.stringify(newUser));
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error: ${error}`);
+  //   }
+  // };
 
-  const handleDisconnect = () => {
-    sessionStorage.removeItem("public_address");
-  };
+  // const handleDisconnect = () => {
+  //   sessionStorage.removeItem("public_address");
+  // };
 
-  useEffect(() => {
-    const storedPublicAddress = sessionStorage.getItem("public_address");
-    if (storedPublicAddress !== null) {
-      setPublicAddress(storedPublicAddress);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const storedPublicAddress = sessionStorage.getItem("public_address");
+  //   if (storedPublicAddress !== null) {
+  //     setPublicAddress(storedPublicAddress);
+  //   }
+  // }, []);
 
   return (
     <NavigationMenu

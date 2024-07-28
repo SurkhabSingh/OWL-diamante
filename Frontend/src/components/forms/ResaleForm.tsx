@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import axios from "axios";
 
 const ResaleForm = ({ selectedGame, open, setOpen }) => {
   const form = useForm({
@@ -12,6 +13,9 @@ const ResaleForm = ({ selectedGame, open, setOpen }) => {
 
   const { register, handleSubmit, formState, setValue } = form;
   const { errors } = formState;
+  const publicKey = sessionStorage.getItem("publicKey");
+  const secretKey = sessionStorage.getItem("secretKey");
+  console.log(secretKey);
 
   useEffect(() => {
     if (selectedGame) {
@@ -19,7 +23,7 @@ const ResaleForm = ({ selectedGame, open, setOpen }) => {
     }
   }, [selectedGame, setValue]);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const resaleData = {
       id: selectedGame.id,
       cover: selectedGame.cover.url,
@@ -27,6 +31,24 @@ const ResaleForm = ({ selectedGame, open, setOpen }) => {
       price: data.price,
     };
 
+    const bodyL = {
+      assetName: selectedGame.id.toString(),
+      seller: secretKey,
+    };
+
+    const response = await axios.get(
+      `http://localhost:3001/verify?publicKey=${publicKey}&key=cid:${selectedGame.id}`
+    );
+
+    // const response1 = await axios
+    //   .post("http://localhost:3001/list", bodyL)
+    //   .then((result) => {
+    //     console.log(result.data);
+    //     return result.data;
+    //   });
+    // console.log(response1);
+
+    console.log(response.data);
     setOpen(false);
   };
 

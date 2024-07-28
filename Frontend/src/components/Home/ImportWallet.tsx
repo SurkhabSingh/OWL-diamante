@@ -12,7 +12,7 @@ import { FaCopy } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { createUser } from "@/api/user/createUser";
+import { createUser, getAllUsers } from "@/api/user/createUser";
 
 const CreateWallet = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -44,7 +44,28 @@ const CreateWallet = () => {
       sessionStorage.setItem("secretKey", data.secretKey);
 
       const newUser = await createUser(data.publicKey, data.secretKey);
+
       sessionStorage.setItem("current-user", JSON.stringify(newUser));
+
+      /////
+      try {
+        const users = await getAllUsers();
+        console.log(users);
+        const user = users?.findLast(
+          (user: any) => user.walletAddress === data.publicKey
+        );
+        sessionStorage.setItem("current-user", JSON.stringify(user));
+        console.log(user);
+
+        if (user === undefined) {
+          const newUser = await createUser(data.publicKey, data.secretKey);
+          sessionStorage.setItem("current-user", JSON.stringify(newUser));
+        }
+      } catch (error) {
+        console.error(`Error: ${error}`);
+      }
+      window.location.reload();
+      ////////
     } catch (error) {
       toast.error("Failed to fetch wallet data");
     }
