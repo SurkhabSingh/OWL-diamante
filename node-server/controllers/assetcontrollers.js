@@ -67,9 +67,6 @@ exports.list = async (req, res) => {
     const MARKET = Keypair.fromSecret(process.env.INTERMEDIATE_SECRET_KEY);
     const seller_keypair = Keypair.fromSecret(seller);
 
-    // const intermediateIssuer = Keypair.random();
-    // await fundAccount(intermediateIssuer);
-
     const listing_price = "5";
 
     const asset = new Asset(assetName, seller_keypair.publicKey());
@@ -81,7 +78,6 @@ exports.list = async (req, res) => {
 
     console.log(
       assetName,
-      intermediateIssuer.publicKey(),
       seller_keypair.publicKey()
     );
 
@@ -89,7 +85,15 @@ exports.list = async (req, res) => {
       if (res.status === 200) {
         await transferAsset(asset, seller_keypair, MARKET).then(async (res) => {
           if (res.status === 200) {
-            await transfer_money(listing_price, seller_keypair, MARKET);
+            await manageData(
+              assetName,
+              MARKET,
+              seller_keypair.publicKey()
+            ).then(async (res) => {
+              if (res.status === 200) {
+                await transfer_money(listing_price, seller_keypair, MARKET);
+              }
+            });
           }
         });
       }

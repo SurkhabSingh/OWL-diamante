@@ -24,29 +24,29 @@ const ResaleForm = ({ selectedGame, open, setOpen }) => {
   }, [selectedGame, setValue]);
 
   const onSubmit = async (data) => {
-    // const resaleData = {
-    //   id: selectedGame.id,
-    //   cover: selectedGame.cover.url,
-    //   name: data.gameName,
-    //   price: data.price,
-    // };
+    const resaleData = {
+      id: selectedGame.id,
+      cover: selectedGame.cover.url,
+      name: data.gameName,
+      price: data.price,
+    };
 
-    // const bodyL = {
-    //   assetName: selectedGame.id.toString(),
-    //   seller: secretKey,
-    // };
+    const bodyL = {
+      assetName: selectedGame.id.toString(),
+      seller: secretKey,
+    };
 
     const response = await axios.get(
       `http://localhost:3001/verify?publicKey=${publicKey}&key=cid:${selectedGame.id}`
     );
 
-    // const response1 = await axios
-    //   .post("http://localhost:3001/list", bodyL)
-    //   .then((result) => {
-    //     console.log(result.data);
-    //     return result.data;
-    //   });
-    // console.log(response1);
+    const response1 = await axios
+      .post("http://localhost:3001/list", bodyL)
+      .then((result) => {
+        console.log(result.data);
+        return result.data;
+      });
+    console.log(response1);
 
     console.log(response.data);
     setOpen(false);
