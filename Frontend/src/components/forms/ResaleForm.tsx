@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import axios from "axios";
 
-const ResaleForm = ({ selectedGame, open, setOpen }) => {
+const ResaleForm = ({ selectedGame, open, setOpen }: any) => {
   const form = useForm({
     defaultValues: {
       gameName: selectedGame?.name || "",
@@ -23,7 +23,7 @@ const ResaleForm = ({ selectedGame, open, setOpen }) => {
     }
   }, [selectedGame, setValue]);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: any) => {
     const resaleData = {
       id: selectedGame.id,
       cover: selectedGame.cover.url,

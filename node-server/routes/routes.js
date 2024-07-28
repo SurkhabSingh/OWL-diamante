@@ -9,6 +9,8 @@ router
   .post("/list", assetController.list)
   .post("/buy", assetController.buy)
   .get("/verify", assetController.verify)
+  .get("/seller", assetController.getSellerAddress)
+  .get("/verifyAddress", assetController.verifyAddress)
   .get("/generate-wallet", walletController.generateWallet);
 
 module.exports = router;

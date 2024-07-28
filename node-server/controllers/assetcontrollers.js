@@ -76,10 +76,7 @@ exports.list = async (req, res) => {
 
     console.log(marketaccount.balances);
 
-    console.log(
-      assetName,
-      seller_keypair.publicKey()
-    );
+    console.log(assetName, seller_keypair.publicKey());
 
     await createTrust(asset, seller_keypair, MARKET).then(async (res) => {
       if (res.status === 200) {
@@ -121,10 +118,10 @@ exports.buy = async (req, res) => {
     );
 
     console.log(assetName, intermediateIssuer.publicKey(), user, license);
-    const mainIssuerKeypair = Keypair.fromSecret(mainIssuer);
+    // const mainIssuerKeypair = Keypair.fromSecret(mainIssuer);
 
     const userKeypair = Keypair.fromSecret(user);
-    const asset = new Asset(assetName, mainIssuerKeypair.publicKey());
+    const asset = new Asset(assetName, mainIssuer);
 
     //Transferring asset to user and collecting money
     await createTrust(asset, MARKET, userKeypair).then(async (res) => {
@@ -134,7 +131,7 @@ exports.buy = async (req, res) => {
             await manageData(assetName, userKeypair, ipfsHash).then(
               async (res) => {
                 if (res.status === 200) {
-                  await transfer_money(amount, userKeypair, mainIssuerKeypair);
+                  await transfer_money(amount, userKeypair, mainIssuer);
                 }
               }
             );
@@ -159,6 +156,8 @@ exports.verify = async (req, res) => {
   try {
     const { publicKey, key } = req.query;
 
+    console.log(publicKey, key);
+
     const server = new Horizon.Server("https://diamtestnet.diamcircle.io/");
     const account = await server.loadAccount(publicKey);
 
@@ -182,6 +181,65 @@ exports.verify = async (req, res) => {
         });
       })
       .catch((err) => console.log(err));
+  } catch (error) {
+    console.log(error);
+    res.send({
+      status: 500,
+      message: "Error in verify...",
+    });
+  }
+};
+
+exports.getSellerAddress = async (req, res) => {
+  try {
+    const { key } = req.query;
+
+    const server = new Horizon.Server("https://diamtestnet.diamcircle.io/");
+    const account = await server.loadAccount(
+      process.env.INTERMEDIATE_PUBLIC_KEY
+    );
+
+    const encodedData = account.data_attr[key];
+    const decodedData = Buffer.from(encodedData, "base64").toString("utf-8");
+
+    console.log("decoded iss", decodedData);
+    res.send({
+      data: decodedData,
+      status: 200,
+      message: "seller sent successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.send({
+      status: 500,
+      message: "Error in verify...",
+    });
+  }
+};
+
+exports.verifyAddress = async (req, res) => {
+  try {
+    const { publicKey, key } = req.query;
+
+    console.log(publicKey, key);
+
+    const server = new Horizon.Server("https://diamtestnet.diamcircle.io/");
+    const account = await server.loadAccount(publicKey);
+
+    console.log(account);
+
+    const encodedData = account.data_attr[key];
+
+    console.log(encodedData);
+
+    const decodedData = Buffer.from(encodedData, "base64").toString("utf-8");
+
+    console.log("decodedData", decodedData);
+    res.send({
+      data: decodedData,
+      status: 200,
+      message: "metadata sent successfully",
+    });
   } catch (error) {
     console.log(error);
     res.send({

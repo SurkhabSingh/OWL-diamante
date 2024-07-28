@@ -158,7 +158,7 @@ exports.transfer_money = async (amount, payingaccount, receivingaccount) => {
     })
       .addOperation(
         Operation.payment({
-          destination: receivingaccount.publicKey(),
+          destination: receivingaccount,
           asset: Asset.native(),
           amount: amount.toString(),
         })

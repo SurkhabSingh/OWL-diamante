@@ -94,17 +94,24 @@ export default function GameGrid() {
   });
   const handleSelling = async ({ name, id }: any) => {
     const publicKey = sessionStorage.getItem("publicKey");
-    const response = await axios.get(
-      `http://localhost:3001/verify?publicKey=${publicKey}&key=cid:${id.toString()}`
+    const sellerAddress = await axios.get(
+      `http://localhost:3001/seller?key=cid:${id.toString()}_address`
     );
 
-    console.log(response.data);
+    console.log(sellerAddress.data);
 
+    const response = await axios.get(
+      `http://localhost:3001/verifyAddress?publicKey=${
+        sellerAddress.data.data
+      }&key=cid:${id.toString()}_address`
+    );
+
+    console.log(response.data.data);
     const bodyLicense = {
       assetName: id.toString(),
       user: sessionStorage.getItem("secretKey")?.toString(),
-      mainIssuer: response.data.info.userAddress.toString(),
-      license: response.data.hash.toString(),
+      mainIssuer: sellerAddress.data.data.toString(),
+      license: response.data.data.toString(),
     };
     console.log(bodyLicense);
     const buy_response = await axios
