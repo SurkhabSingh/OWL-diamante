@@ -8,7 +8,7 @@ router
   .post("/mint", assetController.mint)
   .post("/list", assetController.list)
   .post("/buy", assetController.buy)
+  .get("/verify", assetController.verify)
   .get("/generate-wallet", walletController.generateWallet);
-  
 
 module.exports = router;

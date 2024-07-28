@@ -7,6 +7,7 @@ const {
   fundAccount,
 } = require("../utils/utilfunctions");
 const { sendFileToIPFS } = require("../utils/ipfsManagement");
+const axios = require("axios");
 
 exports.mint = async (req, res) => {
   try {
@@ -143,6 +144,39 @@ exports.buy = async (req, res) => {
     res.send({
       status: 500,
       message: "Error in buy...",
+    });
+  }
+};
+
+exports.verify = async (req, res) => {
+  try {
+    const { publicKey, key } = req.query;
+
+    const server = new Horizon.Server("https://diamtestnet.diamcircle.io/");
+    const account = await server.loadAccount(publicKey);
+
+    const encodedData = account.data_attr[key];
+
+    const decodedData = Buffer.from(encodedData, "base64").toString("utf-8");
+
+    const decodedSecData = Buffer.from(decodedData, "base64").toString("utf-8");
+
+    await axios
+      .get(`https://ipfs.io/ipfs/${decodedSecData}`)
+      .then((result) => {
+        console.log(result.data);
+        return res.send({
+          data: result.data,
+          status: 200,
+          message: "metadata sent successfully",
+        });
+      })
+      .catch((err) => console.log(err));
+  } catch (error) {
+    console.log(error);
+    res.send({
+      status: 500,
+      message: "Error in verify...",
     });
   }
 };
