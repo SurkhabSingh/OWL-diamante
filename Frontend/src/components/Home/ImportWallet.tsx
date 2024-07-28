@@ -43,7 +43,7 @@ const CreateWallet = () => {
       sessionStorage.setItem("publicKey", data.publicKey);
       sessionStorage.setItem("secretKey", data.secretKey);
 
-      const newUser = await createUser(publicKey, secretKey);
+      const newUser = await createUser(data.publicKey, data.secretKey);
       sessionStorage.setItem("current-user", JSON.stringify(newUser));
     } catch (error) {
       toast.error("Failed to fetch wallet data");

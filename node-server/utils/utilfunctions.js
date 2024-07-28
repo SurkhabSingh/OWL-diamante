@@ -65,24 +65,11 @@ exports.createTrust = async (asset, issuingaccount, receivingaccount) => {
 
 // Mint and Transfer
 
-exports.transferAsset = async (
-  assetName,
-  asset,
-  issuingaccount,
-  receivingaccount,
-  hash
-) => {
+exports.transferAsset = async (asset, issuingaccount, receivingaccount) => {
   try {
     const server = new Horizon.Server("https://diamtestnet.diamcircle.io/");
     const account = await server.loadAccount(issuingaccount.publicKey());
 
-    const metadata = {
-      hash: hash,
-    };
-    const metadataString = JSON.stringify(metadata);
-    const encodedMetadata = Buffer.from(metadataString)
-      .toString("base64")
-      .slice(0, 64);
     const receiverAddress = receivingaccount.publicKey();
 
     const transaction = new TransactionBuilder(account, {
@@ -94,12 +81,6 @@ exports.transferAsset = async (
           destination: receiverAddress,
           asset: asset,
           amount: "1",
-        })
-      )
-      .addOperation(
-        Operation.manageData({
-          name: `cid:${assetName}`,
-          value: encodedMetadata,
         })
       )
 
@@ -117,6 +98,48 @@ exports.transferAsset = async (
   } catch (error) {
     console.error(
       "Error during user trustline:",
+      error.response ? error.response.data : error.message
+    );
+    return {
+      status: 400,
+      hash: "Error",
+    };
+  }
+};
+
+//Set Metadata
+exports.manageData = async (assetName, receivingAccount, hash) => {
+  try {
+    const server = new Horizon.Server("https://diamtestnet.diamcircle.io/");
+    const account = await server.loadAccount(receivingAccount.publicKey());
+    console.log(hash);
+    const encodedMetadata = Buffer.from(hash).toString("base64").slice(0, 64);
+    console.log(encodedMetadata);
+
+    const transaction = new TransactionBuilder(account, {
+      fee: BASE_FEE,
+      networkPassphrase: Networks.TESTNET,
+    })
+      .addOperation(
+        Operation.manageData({
+          name: `cid:${assetName}`,
+          value: encodedMetadata,
+        })
+      )
+
+      .setTimeout(100)
+      .build();
+
+    transaction.sign(receivingAccount);
+    const result = await server.submitTransaction(transaction);
+    console.log("Success in Managing data", result.hash);
+    return {
+      status: 200,
+      hash: result.hash,
+    };
+  } catch (error) {
+    console.error(
+      "Error managing data:",
       error.response ? error.response.data : error.message
     );
     return {

@@ -5,6 +5,7 @@ const {
   transferAsset,
   transfer_money,
   fundAccount,
+  manageData,
 } = require("../utils/utilfunctions");
 const { sendFileToIPFS } = require("../utils/ipfsManagement");
 const axios = require("axios");
@@ -12,7 +13,7 @@ const axios = require("axios");
 exports.mint = async (req, res) => {
   try {
     const { assetName, user, license, amount, image } = req.body;
-    const ipfsHash = sendFileToIPFS({ assetName, license, image });
+    const ipfsHash = await sendFileToIPFS({ assetName, license, image });
     const userKeypair = Keypair.fromSecret(user);
     const MARKET = Keypair.fromSecret(process.env.INTERMEDIATE_SECRET_KEY);
     const intermediateIssuer = Keypair.random();
@@ -25,17 +26,19 @@ exports.mint = async (req, res) => {
     await createTrust(asset, intermediateIssuer, userKeypair).then(
       async (res) => {
         if (res.status === 200) {
-          await transferAsset(
-            assetName,
-            asset,
-            intermediateIssuer,
-            userKeypair,
-            ipfsHash
-          ).then(async (res) => {
-            if (res.status === 200) {
-              await transfer_money(amount, userKeypair, MARKET);
+          await transferAsset(asset, intermediateIssuer, userKeypair).then(
+            async (res) => {
+              if (res.status === 200) {
+                await manageData(assetName, userKeypair, ipfsHash).then(
+                  async (res) => {
+                    if (res.status === 200) {
+                      await transfer_money(amount, userKeypair, MARKET);
+                    }
+                  }
+                );
+              }
             }
-          });
+          );
         }
       }
     );
@@ -54,7 +57,7 @@ exports.mint = async (req, res) => {
 
 exports.list = async (req, res) => {
   try {
-    const { assetName, seller, license } = req.body;
+    const { assetName, seller } = req.body;
 
     const MARKET = Keypair.fromSecret(process.env.INTERMEDIATE_SECRET_KEY);
     const seller_keypair = Keypair.fromSecret(seller);
@@ -74,17 +77,15 @@ exports.list = async (req, res) => {
       assetName,
       intermediateIssuer.publicKey(),
       seller_keypair.publicKey(),
-      license
     );
 
     await createTrust(asset, seller_keypair, MARKET).then(async (res) => {
       if (res.status === 200) {
         await transferAsset(
-          assetName,
           asset,
           seller_keypair,
           MARKET,
-          license
+
         ).then(async (res) => {
           if (res.status === 200) {
             await transfer_money(listing_price, seller_keypair, MARKET);
