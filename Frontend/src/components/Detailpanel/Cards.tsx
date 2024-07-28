@@ -16,7 +16,7 @@ export default function Card({ index, url, name }: DetailProps) {
     >
       <img
         src={url?.replace("thumb", "1080p")}
-        alt="Laptop"
+        alt="game_pic"
         // onClick={() => navigate(`/game/${index}`)}
         className=" w-full rounded-t-md object-cover "
       />

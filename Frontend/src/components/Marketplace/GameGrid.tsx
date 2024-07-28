@@ -92,7 +92,33 @@ export default function GameGrid() {
     queryKey: ["game-query"],
     select: (data) => transformData(data, buttonIndex),
   });
+  const handleSelling = async ({ name, id }: any) => {
+    const publicKey = sessionStorage.getItem("publicKey");
+    const response = await axios.get(
+      `http://localhost:3001/verify?publicKey=${publicKey}&key=cid:${id.toString()}`
+    );
 
+    console.log(response.data);
+
+    const bodyLicense = {
+      assetName: id.toString(),
+      user: sessionStorage.getItem("secretKey")?.toString(),
+      mainIssuer: response.data.info.userAddress.toString(),
+      license: response.data.hash.toString(),
+    };
+    console.log(bodyLicense);
+    const buy_response = await axios
+      .post("http://localhost:3001/buy", bodyLicense)
+      .then((result) => {
+        console.log(result.data);
+        return result.data;
+      });
+    if (buy_response.data.status == 200) {
+      toast.success(`${name} is succesfully minted!`);
+    } else {
+      toast.success(`purchase failed`);
+    }
+  };
   const handleMinting = async ({ price, name, image, id }: any) => {
     // console.log(, name);
 
@@ -161,6 +187,7 @@ export default function GameGrid() {
                 }
                 summary={element?.summary}
                 handleMinting={handleMinting}
+                handleSelling={handleSelling}
                 isSale={buttonIndex === 2 ? true : false}
                 issuerAddress={sellerAddress}
                 className={"w-4/5 rounded-md border cursor-pointer h-[700px] "}

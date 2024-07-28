@@ -18,6 +18,10 @@ export type GameProps = {
   summary: string;
   genres: string;
   className: string;
+  handleMinting: any;
+  handleSelling: any;
+  isSale: boolean;
+  issuerAddress: string;
 };
 
 export default function Games({
@@ -31,6 +35,7 @@ export default function Games({
   genres,
   className,
   handleMinting,
+  handleSelling,
   isSale,
   issuerAddress,
 }: GameProps) {
@@ -119,14 +124,19 @@ export default function Games({
         <div className="flex flex-row">
           <Button
             type="button"
-            onClick={() =>
-              handleMinting({
-                price: Math.floor(Math.random() * 20 + 2),
-                name: name,
-                image: url,
-                id: index,
-              })
-            }
+            onClick={() => {
+              isSale
+                ? handleSelling({
+                    name: name,
+                    id: index,
+                  })
+                : handleMinting({
+                    price: Math.floor(Math.random() * 20 + 2),
+                    name: name,
+                    image: url,
+                    id: index,
+                  });
+            }}
             className="mt-4 w-8/12 justify-center rounded-sm bg-slate-300/25 text-xs font-semibold text-white"
           >
             Buy

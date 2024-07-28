@@ -109,7 +109,7 @@ exports.list = async (req, res) => {
 exports.buy = async (req, res) => {
   try {
     const amount = "15";
-    const { assetName, mainIssuer, user } = req.body;
+    const { assetName, mainIssuer, user, license } = req.body;
     const MARKET = Keypair.fromSecret(process.env.INTERMEDIATE_SECRET_KEY);
 
     const intermediateIssuer = Keypair.fromSecret(
@@ -125,15 +125,15 @@ exports.buy = async (req, res) => {
     //Transferring asset to user and collecting money
     await createTrust(asset, MARKET, userKeypair).then(async (res) => {
       if (res.status === 200) {
-        await transferAsset(
-          assetName,
-          asset,
-          MARKET,
-          userKeypair,
-          license
-        ).then(async (res) => {
+        await transferAsset(asset, MARKET, userKeypair).then(async (res) => {
           if (res.status === 200) {
-            await transfer_money(amount, userKeypair, mainIssuerKeypair);
+            await manageData(assetName, userKeypair, ipfsHash).then(
+              async (res) => {
+                if (res.status === 200) {
+                  await transfer_money(amount, userKeypair, mainIssuerKeypair);
+                }
+              }
+            );
           }
         });
       }
@@ -163,11 +163,6 @@ exports.verify = async (req, res) => {
     const decodedData = Buffer.from(encodedData, "base64").toString("utf-8");
 
     const decodedSecData = Buffer.from(decodedData, "base64").toString("utf-8");
-    // return res.send({
-    //   data: decodedSecData,
-    //   status: 200,
-    //   message: "metadata sent successfully",
-    // });
 
     await axios
       .get(`https://ipfs.io/ipfs/${decodedSecData}`)
