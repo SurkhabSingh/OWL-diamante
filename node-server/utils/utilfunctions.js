@@ -108,11 +108,12 @@ exports.transferAsset = async (asset, issuingaccount, receivingaccount) => {
 };
 
 //Set Metadata
-exports.manageData = async (assetName, receivingAccount, hash) => {
+exports.manageData = async (assetName, receivingAccount, hash, isMint) => {
   try {
     const server = new Horizon.Server("https://diamtestnet.diamcircle.io/");
     const account = await server.loadAccount(receivingAccount.publicKey());
     console.log(hash);
+    console.log(isMint);
 
     const transaction = new TransactionBuilder(account, {
       fee: BASE_FEE,
@@ -120,7 +121,7 @@ exports.manageData = async (assetName, receivingAccount, hash) => {
     })
       .addOperation(
         Operation.manageData({
-          name: `cid:${assetName}_address`,
+          name: isMint ? `cid:${assetName}` : `cid:${assetName}_address`,
           value: hash,
         })
       )

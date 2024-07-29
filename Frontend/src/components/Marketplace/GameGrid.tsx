@@ -54,6 +54,7 @@ export default function GameGrid() {
           .map((balance: any) => balance.asset_issuer)
           .filter((asset: any) => asset !== undefined);
         console.log(issuerAddress);
+        
 
         setSellerAddresses(issuerAddress[0]);
 
@@ -99,12 +100,12 @@ export default function GameGrid() {
       `http://localhost:3001/seller?key=cid:${id.toString()}_address`
     );
 
-    console.log(sellerAddress.data);
+    console.log(sellerAddress.data.data);
 
     const response = await axios.get(
-      `http://localhost:3001/verifyAddress?publicKey=${
+      `http://localhost:3001/verify?publicKey=${
         sellerAddress.data.data
-      }&key=cid:${id.toString()}_address`
+      }&key=cid:${id.toString()}`
     );
 
     console.log(response.data.data);
@@ -112,7 +113,7 @@ export default function GameGrid() {
       assetName: id.toString(),
       user: sessionStorage.getItem("secretKey")?.toString(),
       mainIssuer: sellerAddress.data.data.toString(),
-      license: response.data.data.toString(),
+      license: response.data.data.hash.toString(),
     };
     console.log(bodyLicense);
     const buy_response = await axios
@@ -184,13 +185,13 @@ export default function GameGrid() {
               <Games
                 key={index}
                 id={index}
-                index={element.id}
-                url={element.cover.url}
-                name={element.name}
-                rating={element.rating}
+                index={element?.id}
+                url={element?.cover?.url}
+                name={element?.name}
+                rating={element?.rating}
                 genres={element?.genres?.map((genre) => genre?.name).join(", ")}
                 releaseDate={
-                  element?.first_release_date || element?.release_dates[0].date
+                  element?.first_release_date 
                 }
                 summary={element?.summary}
                 handleMinting={handleMinting}

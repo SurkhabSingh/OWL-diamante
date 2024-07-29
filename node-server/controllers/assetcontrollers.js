@@ -34,10 +34,14 @@ exports.mint = async (req, res) => {
           await transferAsset(asset, intermediateIssuer, userKeypair).then(
             async (res) => {
               if (res.status === 200) {
-                await manageData(assetName, userKeypair, ipfsHash).then(
+                await manageData(assetName, userKeypair, ipfsHash, true).then(
                   async (res) => {
                     if (res.status === 200) {
-                      await transfer_money(amount, userKeypair, MARKET);
+                      await transfer_money(
+                        amount,
+                        userKeypair,
+                        MARKET.publicKey()
+                      );
                     }
                   }
                 );
@@ -85,10 +89,15 @@ exports.list = async (req, res) => {
             await manageData(
               assetName,
               MARKET,
-              seller_keypair.publicKey()
+              seller_keypair.publicKey(),
+              false
             ).then(async (res) => {
               if (res.status === 200) {
-                await transfer_money(listing_price, seller_keypair, MARKET);
+                await transfer_money(
+                  listing_price,
+                  seller_keypair,
+                  MARKET.publicKey()
+                );
               }
             });
           }
@@ -128,7 +137,7 @@ exports.buy = async (req, res) => {
       if (res.status === 200) {
         await transferAsset(asset, MARKET, userKeypair).then(async (res) => {
           if (res.status === 200) {
-            await manageData(assetName, userKeypair, ipfsHash).then(
+            await manageData(assetName, userKeypair, license, true).then(
               async (res) => {
                 if (res.status === 200) {
                   await transfer_money(amount, userKeypair, mainIssuer);
@@ -163,17 +172,19 @@ exports.verify = async (req, res) => {
 
     const encodedData = account.data_attr[key];
 
+    console.log("Encoded data is", encodedData);
+
     const decodedData = Buffer.from(encodedData, "base64").toString("utf-8");
 
-    const decodedSecData = Buffer.from(decodedData, "base64").toString("utf-8");
+    console.log(decodedData);
 
     await axios
-      .get(`https://ipfs.io/ipfs/${decodedSecData}`)
+      .get(`https://ipfs.io/ipfs/${decodedData}`)
       .then((result) => {
         console.log(result.data);
         return res.send({
           data: {
-            hash: decodedSecData,
+            hash: decodedData,
             info: result.data,
           },
           status: 200,
@@ -182,7 +193,6 @@ exports.verify = async (req, res) => {
       })
       .catch((err) => console.log(err));
   } catch (error) {
-    console.log(error);
     res.send({
       status: 500,
       message: "Error in verify...",

@@ -21,6 +21,11 @@ const Inventory = () => {
   const getData = async () => {
     try {
       const response = await p2pCall(publicKey);
+      const trial_resp = await p2pCall(
+        "GAFUGO4MGWDCZLLUINOCWKHDM53MHXX24I54267WCUL43YY24XD7AQ5K"
+      );
+      console.log(response);
+      console.log("Trial", trial_resp);
       const assets = response.data.balances
         .filter((balance) => balance.balance > 0)
         .map((balance) => balance.asset_code)
@@ -78,7 +83,7 @@ const Inventory = () => {
               <Dialog>
                 <DialogTrigger asChild>
                   <Button
-                    className="flex gap-x-5 bg-gray-200 hover:bg-red-200"
+                    className="flex gap-x-5 bg-gray-400 hover:bg-red-200 mt-3 w-full font-urbanist text-xl font-extrabold tracking-wider"
                     onClick={() => openResaleModal(game)}
                   >
                     List
