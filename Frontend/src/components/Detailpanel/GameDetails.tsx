@@ -6,6 +6,7 @@ import timeConverter from "../../utils/unixTimeConvert";
 import { Button } from "@nextui-org/react";
 import { RiSubtractFill } from "react-icons/ri";
 import { CiViewList } from "react-icons/ci";
+import { v4 as uuidv4 } from "uuid";
 
 type dataType = {
   id: string;
@@ -54,12 +55,12 @@ export default function GameDetails({
       try {
         toast.error(`${data.name} removed from Wishlist`);
         removeFromWishlist(data.id);
-        // const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
-        // await axios.delete(`http://localhost:8080/api/wish-list/${userID}`, {
-        //   data: {
-        //     wishList: String(data.id),
-        //   },
-        // });
+        const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
+        await axios.delete(`http://localhost:8080/api/wish-list/${userID}`, {
+          data: {
+            wishList: String(data.id),
+          },
+        });
 
         console.log(`${data.id} removed`);
       } catch (error) {
@@ -67,12 +68,13 @@ export default function GameDetails({
       }
     } else {
       try {
-        // const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
+        const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
         toast.success(`${data.name} added to Wishlist`);
         addToWishlist(data.id);
-        // await axios.put(`http://localhost:8080/api/wish-list/${userID}`, {
-        //   wishList: [String(data.id)],
-        // });
+        await axios.put(`http://localhost:8080/api/wish-list/${userID}`, {
+          wishList: [String(data.id)],
+        });
+
         console.log(`${data.id} added to wishlist`);
       } catch (error) {
         console.error("API is not working!!");
@@ -80,25 +82,55 @@ export default function GameDetails({
     }
   };
 
-  const handleCart = async () => {
-    if (isInCart) {
-      toast.error(`${data.name} removed from Cart`);
-      removeFromCart(data.id);
-    } else {
-      toast.success(`${data.name} added to Cart`);
-      addToCart(data.id);
-      const response = await axios
-        .post("http://localhost:3001/mint", {
-          assetName: "OWL",
-          mainIssuer:
-            "SALNJDDXIAZHI5LDLW354TTEWFHJGC5J6ZXMIUGPDR4CEALEI4DVSFZ2",
-          user: "SDUT3NXJGAY6OKTZ3XXFI2C5XXCOF3XMYNSKMVXEWXO2CULUEK7UPV2F",
-          license: "00-ACR-45A",
-        })
-        .then((result) => {
-          console.log(result.data);
-          return result.data;
-        });
+  // const handleMinting = async () => {
+  //   const bodyLicense = {
+  //     amount: Math.floor(Math.random() * 20 + 2),
+  //     assetName: data.id.toString(),
+  //     image: data.cover.url,
+  //     license: uuidv4(),
+  //     user: sessionStorage.getItem("secretKey")?.toString(),
+  //     userAddress: sessionStorage.getItem("publicKey")?.toString(),
+  //   };
+  //   console.log(bodyLicense);
+  //   const response = await axios
+  //     .post("http://localhost:3001/mint", bodyLicense)
+  //     .then((result) => {
+  //       console.log(result.data);
+  //       if (response.data.status == 200) {
+  //         toast.success(`${data.name} is succesfully minted!`);
+  //       } else {
+  //         toast.success(`purchase failed`);
+  //       }
+  //       return result.data;
+  //     });
+  // };
+
+  const handleMinting = async () => {
+    try {
+      const bodyLicense = {
+        amount: Math.floor(Math.random() * 20 + 2),
+        assetName: data.id.toString(),
+        image: data.cover.url,
+        license: uuidv4(),
+        user: sessionStorage.getItem("secretKey")?.toString(),
+        userAddress: sessionStorage.getItem("publicKey")?.toString(),
+      };
+      console.log(bodyLicense);
+
+      const response = await axios.post(
+        "http://localhost:3001/mint",
+        bodyLicense
+      );
+      console.log(response.data);
+
+      if (response.data.status === 200) {
+        toast.success(`${data.name} is successfully minted!`);
+      } else {
+        toast.error("Minting failed");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred during minting");
     }
   };
 
@@ -160,17 +192,18 @@ export default function GameDetails({
               <div className="flex flex-row">
                 <Button
                   type="button"
-                  onClick={handleCart}
+                  onClick={handleMinting}
                   className="flex w-9/12 items-center mt-4 rounded-sm bg-black text-sm font-semibold text-white"
                 >
-                  {isInCart ? (
+                  Buy
+                  {/* {isInCart ? (
                     <>
                       Remove from Cart{" "}
                       <RiSubtractFill className="text-3xl text-blue-400" />
                     </>
                   ) : (
                     <>Buy </>
-                  )}
+                  )} */}
                 </Button>
                 <Button
                   type="button"

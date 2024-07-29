@@ -41,8 +41,8 @@ export default function Games({
 }: GameProps) {
   const navigate = useNavigate();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
-  const { cart, addToCart, removeFromCart } = useCartStore();
-  const isInCart = cart.includes(index);
+  // const { cart, addToCart, removeFromCart } = useCartStore();
+  // const isInCart = cart.includes(index);
   const isInWishlist = wishlist.includes(index);
 
   const handleWishlist = async () => {
@@ -50,12 +50,13 @@ export default function Games({
       try {
         toast.error(`${name} removed from Wishlist`);
         removeFromWishlist(index);
-        // const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
-        // await axios.delete(`http://localhost:8080/api/wish-list/${userID}`, {
-        //   data: {
-        //     wishList: String(index),
-        //   },
-        // });
+        const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
+        await axios.delete(`http://localhost:8080/api/wish-list/${userID}`, {
+          data: {
+            wishList: String(index),
+          },
+        });
+
         console.log(`${index} removed`);
       } catch (error) {
         console.error("API not working!@!");
@@ -64,10 +65,9 @@ export default function Games({
       try {
         toast.success(`${name} added to Wishlist`);
         addToWishlist(index);
-        // const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
-        // await axios.put(`http://localhost:8080/api/wish-list/${userID}`, {
-        //   wishList: [String(index)],
-        // });
+        await axios.put(`http://localhost:8080/api/wish-list/${userID}`, {
+          wishList: [String(index)],
+        });
         console.log(`${index} added to wishlist`);
       } catch (error) {
         console.error("API is not working!!");
@@ -140,17 +140,6 @@ export default function Games({
             className="mt-4 w-8/12 justify-center rounded-sm bg-slate-300/25 text-xs font-semibold text-white"
           >
             Buy
-            {/* {isInCart ? (
-              <div className="flex items-center">
-                Remove from Cart
-                <RiSubtractFill className="text-blue-500 text-2xl font-extrabold" />
-              </div>
-            ) : (
-              <>
-                Buy
-                <MdShoppingCart className="text-xl font-extrabold" />
-              </>
-            )} */}
           </Button>
 
           <Button

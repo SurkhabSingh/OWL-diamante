@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   Button,
   Modal,
@@ -9,7 +10,8 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { FaCopy } from "react-icons/fa";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { createUser, getAllUsers } from "@/api/user/createUser";
@@ -21,10 +23,14 @@ const CreateWallet = () => {
   const [secretKey, setSecretKey] = useState("");
 
   const walletData = async () => {
+    toast.success("Generating wallet...", {
+      position: "top-right",
+    });
     try {
       const response = await fetch("http://localhost:3001/generate-wallet");
       const data = await response.json();
       console.log(data);
+
       let headersList = {
         Accept: "*/*",
       };
@@ -44,10 +50,8 @@ const CreateWallet = () => {
       sessionStorage.setItem("secretKey", data.secretKey);
 
       const newUser = await createUser(data.publicKey, data.secretKey);
-
       sessionStorage.setItem("current-user", JSON.stringify(newUser));
 
-      /////
       try {
         const users = await getAllUsers();
         console.log(users);
@@ -64,27 +68,37 @@ const CreateWallet = () => {
       } catch (error) {
         console.error(`Error: ${error}`);
       }
-      window.location.reload();
-      ////////
+      toast.success("Wallet generated successfully!", {
+        position: "top-right",
+      });
+      // window.location.reload();
     } catch (error) {
-      toast.error("Failed to fetch wallet data");
+      toast.error("Failed to fetch wallet data", {
+        position: "top-right",
+      });
     }
   };
 
   const onCopyClickMnemonic = async () => {
     await navigator.clipboard.writeText(mnemonic);
 
-    toast.success("Copied to clipboard");
+    toast.success("Copied to clipboard", {
+      position: "top-right",
+    });
   };
   const onCopyClickPubKey = async () => {
     await navigator.clipboard.writeText(publicKey);
 
-    toast.success("Copied to clipboard");
+    toast.success("Copied to clipboard", {
+      position: "top-right",
+    });
   };
   const onCopyClickSecKey = async () => {
     await navigator.clipboard.writeText(secretKey);
 
-    toast.success("Copied to clipboard");
+    toast.success("Copied to clipboard", {
+      position: "top-right",
+    });
   };
 
   return (

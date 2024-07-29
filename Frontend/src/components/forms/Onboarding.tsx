@@ -17,6 +17,7 @@ export default function Onboarding() {
   const { Form, setForm }: any = useFormStore();
 
   const [selected, setSelected] = useState([]);
+  const address = sessionStorage.getItem("publicKey");
 
   const form = useForm({
     defaultValues: {
@@ -57,7 +58,7 @@ export default function Onboarding() {
       await updateUser(data, userInfo?.ID);
     }
 
-    setForm({ ...Form, ["ID"]: 1});
+    setForm({ ...Form, ["ID"]: userInfo?.ID });
 
     console.log(Form);
     console.log(data);

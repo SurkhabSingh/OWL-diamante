@@ -40,26 +40,10 @@ export const useFormStore = create((set) => ({
     set(() => ({ Form: updatedForm })),
 }));
 
-export type ResaleContextTypes = {
-  Resale: {
-    gameName: string;
-    price: string;
-  };
-};
-
-export const useResaleStore = create((set) => ({
-  Resale: {
-    gameName: "",
-    price: "",
-  },
-  setResale: (updatedResale: ResaleContextTypes) =>
-    set(() => ({ Resale: updatedResale })),
-}));
-
 const getData = async () => {
-  // const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
+  const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
   const result = await axios.get(
-    `http://localhost:8080/api/wish-list/1?token=fh3tb23zd0fffm87xhgyjxlojvf3z0`
+    `http://localhost:8080/api/wish-list/${userID}?token=fh3tb23zd0fffm87xhgyjxlojvf3z0`
   );
   return result.data;
 };

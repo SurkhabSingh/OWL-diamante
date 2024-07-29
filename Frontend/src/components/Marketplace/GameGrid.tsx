@@ -33,6 +33,7 @@ export default function GameGrid() {
   const [postsPerPage] = useState<number>(12);
   const [resellGames, setResellGames] = useState();
   const [sellerAddress, setSellerAddresses] = useState([]);
+  const [isMinted, SetIsMinted] = useState("null");
 
   useEffect(() => {
     async function fetchData() {
@@ -127,8 +128,6 @@ export default function GameGrid() {
     }
   };
   const handleMinting = async ({ price, name, image, id }: any) => {
-    // console.log(, name);
-
     const bodyLicense = {
       amount: price,
       assetName: id.toString(),
@@ -141,9 +140,10 @@ export default function GameGrid() {
     const response = await axios
       .post("http://localhost:3001/mint", bodyLicense)
       .then((result) => {
-        console.log(result.data);
+        SetIsMinted(response);
         return result.data;
       });
+    console.log(isMinted);
     if (response.data.status == 200) {
       toast.success(`${name} is succesfully minted!`);
     } else {
