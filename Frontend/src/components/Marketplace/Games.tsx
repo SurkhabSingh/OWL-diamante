@@ -7,6 +7,7 @@ import { CiViewList } from "react-icons/ci";
 import { useCartStore, useWishlistStore } from "@/store/store";
 import { MdShoppingCart } from "react-icons/md";
 import axios from "axios";
+import { useState } from "react";
 
 export type GameProps = {
   id: number;
@@ -41,16 +42,18 @@ export default function Games({
 }: GameProps) {
   const navigate = useNavigate();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
-  // const { cart, addToCart, removeFromCart } = useCartStore();
-  // const isInCart = cart.includes(index);
   const isInWishlist = wishlist.includes(index);
+  const [userID, setUserID] = useState("");
+  const userString = sessionStorage.getItem("current-user");
 
   const handleWishlist = async () => {
     if (isInWishlist) {
       try {
         toast.error(`${name} removed from Wishlist`);
         removeFromWishlist(index);
-        const userID = JSON.parse(sessionStorage.getItem("current-user"))?.ID;
+        const user = JSON.parse(sessionStorage.getItem("current-user"));
+        const userID = user?.ID;
+
         await axios.delete(`http://localhost:8080/api/wish-list/${userID}`, {
           data: {
             wishList: String(index),
@@ -63,14 +66,19 @@ export default function Games({
       }
     } else {
       try {
-        toast.success(`${name} added to Wishlist`);
         addToWishlist(index);
+        console.log("sssss");
+        const user = JSON.parse(sessionStorage.getItem("current-user"));
+        const userID = user?.ID;
+        console.log(userID);
+
         await axios.put(`http://localhost:8080/api/wish-list/${userID}`, {
           wishList: [String(index)],
         });
+        toast.success(`${name} added to Wishlist`);
         console.log(`${index} added to wishlist`);
       } catch (error) {
-        console.error("API is not working!!");
+        console.log(error);
       }
     }
   };
@@ -92,7 +100,9 @@ export default function Games({
         {isSale ? (
           <div>
             <p className="mt-3 flex justify-between text-sm text-white line-clamp-3">
-              <span className="text-white">Address:{issuerAddress}</span>
+              <span className="text-violet-400">
+                Address:<span className="text-white">{issuerAddress}</span>
+              </span>
             </p>
           </div>
         ) : (

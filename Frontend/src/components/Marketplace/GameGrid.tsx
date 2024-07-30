@@ -11,7 +11,7 @@ import axios from "axios";
 import ManageToken from "../profile/ManageToken";
 import { getRecommendations } from "@/api/games/getRecommendations";
 import { p2pCall } from "@/api/games/p2pcall";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 // type fetchDataType = {
 //   id: number;
@@ -54,7 +54,6 @@ export default function GameGrid() {
           .map((balance: any) => balance.asset_issuer)
           .filter((asset: any) => asset !== undefined);
         console.log(issuerAddress);
-        
 
         setSellerAddresses(issuerAddress[0]);
 
@@ -94,62 +93,90 @@ export default function GameGrid() {
     queryKey: ["game-query"],
     select: (data) => transformData(data, buttonIndex),
   });
-  const handleSelling = async ({ name, id }: any) => {
-    const publicKey = sessionStorage.getItem("publicKey");
-    const sellerAddress = await axios.get(
-      `http://localhost:3001/seller?key=cid:${id.toString()}_address`
-    );
 
-    console.log(sellerAddress.data.data);
+  const handleSelling = async ({ name, id }) => {
+    const myPromise = new Promise(async (resolve, reject) => {
+      try {
+        const publicKey = sessionStorage.getItem("publicKey");
+        const sellerAddress = await axios.get(
+          `http://localhost:3001/seller?key=cid:${id.toString()}_address`
+        );
 
-    const response = await axios.get(
-      `http://localhost:3001/verify?publicKey=${
-        sellerAddress.data.data
-      }&key=cid:${id.toString()}`
-    );
+        console.log(sellerAddress.data.data);
 
-    console.log(response.data.data);
-    const bodyLicense = {
-      assetName: id.toString(),
-      user: sessionStorage.getItem("secretKey")?.toString(),
-      mainIssuer: sellerAddress.data.data.toString(),
-      license: response.data.data.hash.toString(),
-    };
-    console.log(bodyLicense);
-    const buy_response = await axios
-      .post("http://localhost:3001/buy", bodyLicense)
-      .then((result) => {
-        console.log(result.data);
-        return result.data;
-      });
-    if (buy_response.data.status == 200) {
-      toast.success(`${name} is succesfully minted!`);
-    } else {
-      toast.success(`purchase failed`);
-    }
+        const response = await axios.get(
+          `http://localhost:3001/verify?publicKey=${
+            sellerAddress.data.data
+          }&key=cid:${id.toString()}`
+        );
+
+        console.log(response.data.data);
+        const bodyLicense = {
+          assetName: id.toString(),
+          user: sessionStorage.getItem("secretKey")?.toString(),
+          mainIssuer: sellerAddress.data.data.toString(),
+          license: response.data.data.hash.toString(),
+        };
+        console.log(bodyLicense);
+
+        const buy_response = await axios.post(
+          "http://localhost:3001/buy",
+          bodyLicense
+        );
+
+        console.log(buy_response.data);
+
+        if (buy_response.status === 200) {
+          resolve(buy_response.data);
+        } else {
+          reject(new Error("Purchase failed"));
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+
+    toast.promise(myPromise, {
+      loading: "Purchasing.....",
+      success: (data) => `${name} successfully bought!`,
+      error: "Error",
+    });
   };
   const handleMinting = async ({ price, name, image, id }: any) => {
-    const bodyLicense = {
-      amount: price,
-      assetName: id.toString(),
-      image,
-      license: uuidv4(),
-      user: sessionStorage.getItem("secretKey")?.toString(),
-      userAddress: sessionStorage.getItem("publicKey")?.toString(),
-    };
-    console.log(bodyLicense);
-    const response = await axios
-      .post("http://localhost:3001/mint", bodyLicense)
-      .then((result) => {
-        SetIsMinted(response);
-        return result.data;
-      });
-    console.log(isMinted);
-    if (response.data.status == 200) {
-      toast.success(`${name} is succesfully minted!`);
-    } else {
-      toast.success(`purchase failed`);
-    }
+    const myPromise = new Promise(async (resolve, reject) => {
+      try {
+        const bodyLicense = {
+          amount: price,
+          assetName: id.toString(),
+          image,
+          license: uuidv4(),
+          user: sessionStorage.getItem("secretKey")?.toString(),
+          userAddress: sessionStorage.getItem("publicKey")?.toString(),
+        };
+        console.log(bodyLicense);
+
+        const response = await axios.post(
+          "http://localhost:3001/mint",
+          bodyLicense
+        );
+
+        console.log(response);
+
+        if (response.status === 200) {
+          resolve(response.data);
+        } else {
+          reject(new Error("Purchase failed"));
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+
+    toast.promise(myPromise, {
+      loading: "Minting...",
+      success: (data) => `${name} is successfully minted!`,
+      error: "Error",
+    });
   };
 
   const { data, isLoading } = gameData;
@@ -190,9 +217,7 @@ export default function GameGrid() {
                 name={element?.name}
                 rating={element?.rating}
                 genres={element?.genres?.map((genre) => genre?.name).join(", ")}
-                releaseDate={
-                  element?.first_release_date 
-                }
+                releaseDate={element?.first_release_date}
                 summary={element?.summary}
                 handleMinting={handleMinting}
                 handleSelling={handleSelling}

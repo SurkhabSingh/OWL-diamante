@@ -13,7 +13,6 @@ import { updateUser } from "@/api/user/updateUser";
 export default function Onboarding() {
   const multiselectRef = useRef(null);
 
-  // const { Form, setForm } = useContext(formContext) as FormContextTypes;
   const { Form, setForm }: any = useFormStore();
 
   const [selected, setSelected] = useState([]);
@@ -40,18 +39,18 @@ export default function Onboarding() {
   const { errors } = formState;
 
   useEffect(() => {
-    return setSelected(multiselectRef.current.getSelectedItems);
+    return setSelected(multiselectRef.current.getSelectedItems());
   }, [multiselectRef]);
 
   const onSubmit = async (data: any) => {
     form.setValue("tags", selected);
+    console.log(selected);
 
     await sendFileToIPFS(form.getValues("picture"))
       .then((result) => {
         data.picture = result;
       })
       .catch((err) => console.log(err));
-    // data.picture = hash;
 
     const userInfo = JSON.parse(sessionStorage.getItem("current-user"));
     if (userInfo !== undefined) {
@@ -62,7 +61,8 @@ export default function Onboarding() {
 
     console.log(Form);
     console.log(data);
-    window.location.reload();
+    
+
   };
 
   return (
@@ -102,8 +102,7 @@ export default function Onboarding() {
                   htmlFor=""
                   className=" text-base font-medium text-[rgba(255,255,255,0.67)] text-left "
                 >
-                  {" "}
-                  Email address{" "}
+                  Email address
                 </label>
                 <div className="mt-2">
                   <input
@@ -121,8 +120,7 @@ export default function Onboarding() {
                   htmlFor=""
                   className=" text-base font-medium text-[rgba(255,255,255,0.67)] text-left "
                 >
-                  {" "}
-                  Bio{" "}
+                  Bio
                 </label>
                 <div className="mt-2">
                   <textarea

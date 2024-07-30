@@ -31,7 +31,9 @@ export function NavbarComp() {
 
   const { cart } = useCartStore();
   const { setButtonIndex } = useSidebarStore();
-  const [publicAddress, setPublicAddress] = useState();
+  // const [publicAddress, setPublicAddress] = useState();
+  const publicKey = sessionStorage.getItem("publicKey");
+  const secretKey = sessionStorage.getItem("secretKey");
 
   const navigate = useNavigate();
 
@@ -48,28 +50,27 @@ export function NavbarComp() {
     },
   ];
 
-  // const handleWalletConnect = async () => {
-  //   let public_address = "";
-  //   if (!window.diam) {
-  //     toast.error("Please install Diam Wallet extension.");
-  //     return;
-  //   }
-  //   window.diam
-  //     .connect()
-  //     .then((result) => {
-  //       toast.success(`Wallet connected succesfully`);
-  //       public_address = result.message[0];
-  //       console.log(result);
-  //       sessionStorage.setItem("public_address", public_address);
-  //       setPublicAddress(public_address);
-  //     })
-  //     .catch((error) => console.error(`Error: ${error}`));
-  // };
+  useEffect(() => {
+    const handleConnect = async () => {
+      try {
+        const users = await getAllUsers();
+        console.log(users);
+        const user = users?.findLast(
+          (user: any) => user.walletAddress === publicKey
+        );
+        sessionStorage.setItem("current-user", JSON.stringify(user));
+        console.log(user);
 
-  // const handleDisconnect = () => {
-  //   sessionStorage.removeItem("public_address");
-  // };
-
+        if (user === undefined) {
+          const newUser = await createUser(publicKey, secretKey);
+          sessionStorage.setItem("current-user", JSON.stringify(newUser));
+        }
+      } catch (error) {
+        console.error(`Error: ${error}`);
+      }
+    };
+    handleConnect();
+  }, []);
 
   return (
     <NavigationMenu

@@ -1,26 +1,23 @@
 import axios from "axios";
 import { URLEndpoint } from "../games/getGames";
 
-
 type updateUser = {
-  user:{
-  username: string;
-  email: string;
-  bio: string;
-  tags: [string];
-  picture: string;
-  walletAddress: `0x${string}` | undefined;
-  wishlist: any[];
-
+  user: {
+    username: string;
+    email: string;
+    bio: string;
+    tags: [string];
+    picture: string;
+    walletAddress: string | undefined;
+    wishlist: any[];
   };
-  id:number;
-  
+  id: number;
 };
 export const updateUser = async (
-  { username, email, bio, tags, picture, walletAddress },
+  { username, email, bio, tags, picture },
   id
 ) => {
-  // const { address } = useAccount();
+  const publicKey = sessionStorage.getItem("publicKey");
 
   console.log(username, picture, id);
   await axios
@@ -30,7 +27,7 @@ export const updateUser = async (
       Bio: bio,
       tags: tags,
       picture: picture,
-      walletAddress: walletAddress,
+      walletAddress: publicKey,
     })
     .then((result) => {
       console.log(result);

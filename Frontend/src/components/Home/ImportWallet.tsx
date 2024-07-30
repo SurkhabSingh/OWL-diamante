@@ -23,60 +23,45 @@ const CreateWallet = () => {
   const [secretKey, setSecretKey] = useState("");
 
   const walletData = async () => {
-    toast.success("Generating wallet...", {
-      position: "top-right",
-    });
-    try {
-      const response = await fetch("http://localhost:3001/generate-wallet");
-      const data = await response.json();
-      console.log(data);
-
-      let headersList = {
-        Accept: "*/*",
-      };
-
-      let reqOptions = {
-        url: `https://friendbot.diamcircle.io/?addr=${data.publicKey}`,
-        method: "GET",
-        headers: headersList,
-      };
-
-      let response1 = await axios.request(reqOptions);
-
-      setMnemonic(data.mnemonic);
-      setPublicKey(data.publicKey);
-      setSecretKey(data.secretKey);
-      sessionStorage.setItem("publicKey", data.publicKey);
-      sessionStorage.setItem("secretKey", data.secretKey);
-
-      const newUser = await createUser(data.publicKey, data.secretKey);
-      sessionStorage.setItem("current-user", JSON.stringify(newUser));
-
+    const myPromise = new Promise(async (resolve, reject) => {
       try {
-        const users = await getAllUsers();
-        console.log(users);
-        const user = users?.findLast(
-          (user: any) => user.walletAddress === data.publicKey
-        );
-        sessionStorage.setItem("current-user", JSON.stringify(user));
-        console.log(user);
+        const response = await fetch("http://localhost:3001/generate-wallet");
+        const data = await response.json();
+        console.log(data);
 
-        if (user === undefined) {
-          const newUser = await createUser(data.publicKey, data.secretKey);
-          sessionStorage.setItem("current-user", JSON.stringify(newUser));
-        }
+        let headersList = {
+          Accept: "*/*",
+        };
+
+        let reqOptions = {
+          url: `https://friendbot.diamcircle.io/?addr=${data.publicKey}`,
+          method: "GET",
+          headers: headersList,
+        };
+
+        let response1 = await axios.request(reqOptions);
+
+        setMnemonic(data.mnemonic);
+        setPublicKey(data.publicKey);
+        setSecretKey(data.secretKey);
+        sessionStorage.setItem("publicKey", data.publicKey);
+        sessionStorage.setItem("secretKey", data.secretKey);
+
+        const newUser = await createUser(data.publicKey, data.secretKey);
+        sessionStorage.setItem("current-user", JSON.stringify(newUser));
+
+        resolve("Wallet generated successfully!");
+        window.location.reload();
       } catch (error) {
-        console.error(`Error: ${error}`);
+        reject(new Error("Failed to fetch wallet data"));
       }
-      toast.success("Wallet generated successfully!", {
-        position: "top-right",
-      });
-      // window.location.reload();
-    } catch (error) {
-      toast.error("Failed to fetch wallet data", {
-        position: "top-right",
-      });
-    }
+    });
+
+    toast.promise(myPromise, {
+      loading: "Generating wallet...",
+      success: (message) => message,
+      error: "Failed to fetch wallet data",
+    });
   };
 
   const onCopyClickMnemonic = async () => {

@@ -106,32 +106,40 @@ export default function GameDetails({
   // };
 
   const handleMinting = async () => {
-    try {
-      const bodyLicense = {
-        amount: Math.floor(Math.random() * 20 + 2),
-        assetName: data.id.toString(),
-        image: data.cover.url,
-        license: uuidv4(),
-        user: sessionStorage.getItem("secretKey")?.toString(),
-        userAddress: sessionStorage.getItem("publicKey")?.toString(),
-      };
-      console.log(bodyLicense);
+    const myPromise = new Promise(async (resolve, reject) => {
+      try {
+        const bodyLicense = {
+          amount: Math.floor(Math.random() * 20 + 2),
+          assetName: data.id.toString(),
+          image: data.cover.url,
+          license: uuidv4(),
+          user: sessionStorage.getItem("secretKey")?.toString(),
+          userAddress: sessionStorage.getItem("publicKey")?.toString(),
+        };
+        console.log(bodyLicense);
 
-      const response = await axios.post(
-        "http://localhost:3001/mint",
-        bodyLicense
-      );
-      console.log(response.data);
+        const response = await axios.post(
+          "http://localhost:3001/mint",
+          bodyLicense
+        );
 
-      if (response.data.status === 200) {
-        toast.success(`${data.name} is successfully minted!`);
-      } else {
-        toast.error("Minting failed");
+        console.log(response);
+
+        if (response.status === 200) {
+          resolve(response.data);
+        } else {
+          reject(new Error("Purchase failed"));
+        }
+      } catch (error) {
+        reject(error);
       }
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("An error occurred during minting");
-    }
+    });
+
+    toast.promise(myPromise, {
+      loading: "Minting...",
+      success: () => `${data.name} is successfully minted!`,
+      error: "Error",
+    });
   };
 
   return (
