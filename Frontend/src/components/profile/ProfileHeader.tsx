@@ -33,7 +33,7 @@ export default function ProfileHeader() {
     <section className=" bg-[rgba(255,255,255,0.056)] p-14 dark:bg-gray-900 dark:text-gray-100 mb-20 rounded-lg">
       <div className="flex flex-col space-y-4 md:space-y-0 md:space-x-6 md:flex-row">
         <img
-          src={`${userInfo?.picture}`}
+          src={`https://ipfs.io/ipfs/${userInfo?.picture?.split("ipfs://")[1]}`}
           alt="pfp"
           className=" object-cover self-center flex-shrink-0 w-60 h-60 border rounded-sm md:justify-self-start dark:bg-gray-500 dark:border-gray-700"
         />

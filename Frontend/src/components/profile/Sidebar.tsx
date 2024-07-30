@@ -13,9 +13,9 @@ export default function Sidebar() {
 
   const navigate = useNavigate();
 
-
   const handleDisconnect = () => {
-    disconnect();
+    sessionStorage.removeItem("publicKey");
+    sessionStorage.removeItem("secretKey");
     sessionStorage.setItem("current-user", undefined);
     navigate("/");
   };
@@ -74,12 +74,12 @@ function displayIcons(index: number) {
     case 1:
       return (
         <IoIosChatbubbles className="text-violet-400 text-2xl font-extrabold" />
-      );  
+      );
     case 2:
       return <IoCart className="text-yellow-400 text-2xl font-extrabold" />;
     case 3:
       return <CiViewList className="text-green-400 text-2xl font-extrabold" />;
-      case 4:
+    case 4:
       return <IoCart className="text-green-400 text-2xl font-extrabold" />;
   }
 }
